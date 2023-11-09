@@ -1,47 +1,44 @@
-// Create a todo list using factories (we will need as many as user wants)
+import { projects } from './todo-app';
 
-// consider splitting functionality or naming it projects
-export default function TodoList(title) {
-  // declare default general project
-  const projects = [['General']]; // where we store all our projects
-
-  function createTodoList() {
-    updateTodoListName();
-    projects.push([title]); // add list to title
-  }
-
-  function getListOfProjects() {
-    projects.forEach((list) => console.log(list));
-  }
-
-  function getTodoListName() {
-    return `${title}`;
-  }
-
-  function updateTodoListName() {
-    while (title === '') {
-      title = prompt('Please add title');
-    }
-  }
-
-  // Delete List (except for Default/General)
-  function deleteTodoList(title) {
-    for (let i = 0; i < projects.length; i++) {
-      if (projects[i] === title) {
-        projects[i].pop();
-      }
-    }
-  }
-
-  // function deleteTodoItem() {
-  //   console.log('Todo item has been deleted');
-  // }
-
-  return {
-    getListOfProjects,
-    createTodoList,
-    getTodoListName,
-    updateTodoListName,
-    //deleteTodoList,
+// Create a todo list using factory functions (we will need to create multiple todo lists)
+export function createTodoList(title) {
+  const todoListData = {
+    title,
+    todos: [],
   };
+
+  projects.push(todoListData);
+
+  function updateTodoListName(newTitle) {
+    todoListData.title = newTitle;
+  }
+
+  function findItem(title) {
+    todoListData.todos.forEach((item, index) => {
+      if (item.title === title) {
+        return index;
+      } else {
+        return false;
+      }
+    });
+  }
+
+  function addTodoItem(todoItem) {
+    if (findItem(todoListData.title) === false) {
+      console.log('Error. This item is already included.');
+    } else {
+      todoListData.todos.push(todoItem);
+    }
+  }
+
+  function deleteTodoItem(todoItem) {
+    const itemSearched = findItem(todoListData.title); // itemSearched returns index
+    if (itemSearched === false) {
+      console.log('Error. This item is not found.');
+    } else {
+      todoListData.todos.splice(itemSearched, 1);
+    }
+  }
+
+  return { todoListData, updateTodoListName, addTodoItem, deleteTodoItem };
 }

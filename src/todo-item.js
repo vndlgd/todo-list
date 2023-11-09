@@ -1,77 +1,52 @@
 import { format } from 'date-fns';
+import { projects, general } from './todo-app';
+import { addTodoItem } from './todo-list';
 
 // Create a todo object using factories (we will create as many as user wants)
-export function TodoItem(
+export function createTodoItem(
   title = '',
   description = '',
   dueDate = Date.now(),
-  todoList = 'General',
+  todoList = general, // if you don't specify which list, it goes into general
   priority = PRIORITIES.LOW
+  // consider adding a checkbox = false to keep track of completion of task
 ) {
-  // initialize todo item with values
-  function createTodoItem() {
-    updateItemTitle();
-    updateItemDescription();
-    updateDueDate();
-    updateTodoList();
-    updatePriority();
-    getTodoItemInformation(); // after creating, display item in console;
+  const todoItemData = {
+    title,
+    description,
+    dueDate,
+    todoList,
+    priority,
+  };
+
+  // push todoItemData into the corresponding todoList todos array
+  todoList.addTodoItem(todoItemData);
+
+  // functions to update each attribute
+  function updateTitle(newTitle) {
+    title = newTitle;
   }
 
-  function getTodoItemInformation() {
-    console.log(
-      `Title: ${title}\nDescription: ${description}\nDue Date: ${dueDate}\nProject: ${todoList}\nPriority: ${priority}\n`
-    );
+  function updateDescription(newDescription) {
+    description = newDescription;
   }
 
-  function updateItemTitle() {
-    title = prompt('Add title: ');
-    while (title === '') {
-      title = prompt('Please add title: ');
-    }
+  function updateDueDate(newDueDate) {
+    dueDate = newDueDate;
   }
 
-  function updateItemDescription() {
-    description = prompt('Add description');
+  function updateTodoList(newLocation) {
+    todoList = newLocation;
   }
 
-  function updateDueDate() {
-    // possibly include regex to avoid invalid formatting or values
-    // or worry about this until you get to UI implementation
-    const dateRegex = '/^[0-9]{1,2}/[0-9]{1,2}/[0-9]{4}$/';
-    dueDate = format(new Date(prompt('Due Date (MM/DD/YYYY): ')), 'MM/dd/yy');
-    if (dueDate === '') {
-      dueDate = Date.now();
-    }
-    // while (dataRegex.test(dueDate) === false) {
-    //   dueDate = prompt('Due Date (MM/DD/YYYY): ');
-    // }
-  }
-
-  function updateTodoList() {
-    todoList = prompt('Add to project: ');
-  }
-
-  function updatePriority() {
-    let choice = prompt(
-      'Choose a priority number (1-3): 1.LOW, 2.MEDIUM, 3.HIGH'
-    );
-    if (choice === '1') {
-      priority = PRIORITIES.LOW;
-    } else if (choice === '2') {
-      priority = PRIORITIES.MEDIUM;
-    } else if (choice === '3') {
-      priority = PRIORITIES.HIGH;
-    } else {
-      updatePriority();
-    }
+  function updatePriority(newPriority) {
+    priority = newPriority;
   }
 
   return {
-    createTodoItem,
-    getTodoItemInformation,
-    updateItemTitle,
-    updateItemDescription,
+    todoItemData,
+    updateTitle,
+    updateDescription,
     updateDueDate,
     updateTodoList,
     updatePriority,
