@@ -56,3 +56,45 @@ ul {
   padding-left: 40px;
   font-size: 1.5rem;
 }
+
+#projects-sidebar-row {
+  display: flex;
+  justify-content: space-between;
+  padding-right: 20px;
+}
+
+button {
+  cursor: pointer;
+}
+
+#add-projects-button {
+  border: none;
+  color: red;
+  font-size: 1.5rem;
+}
+
+#add-projects-button:hover {
+  color: rgba(255, 0, 0, 0.5);
+  transform: scale(1.5);
+}
+
+#add-items-button {
+  width: 50px;
+  height: 50px;
+  font-size: 2em;
+  font-weight: bold;
+  border-radius: 50%;
+  border: none;
+  background-color: var(--green);
+  color: white;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+  margin-bottom: 40px;
+  margin-right: 40px;
+}
+
+#add-items-button:hover {
+  filter: brightness(1.05);
+  transform: scale(1.1);
+}
