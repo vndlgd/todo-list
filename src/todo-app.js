@@ -1,6 +1,7 @@
 import './style.css';
 import { createTodoItem, PRIORITIES } from './todo-item.js';
 import { createTodoList } from './todo-list.js';
+import { displayController } from './view.js';
 
 export const projects = []; // array that stores all todo-lists created
 
@@ -9,7 +10,12 @@ function printListOfProjects() {
     console.log('TITLE: ' + list.title);
     if (list.todos[0]) {
       for (let i = 0; i < list.todos.length; i++) {
-        console.log('TODO ITEM: ' + list.todos[i].title); // print all to do items in each list
+        console.log(
+          'TODO ITEM: ' +
+            list.todos[i].title +
+            '\nCOMPLETED: ' +
+            list.todos[i].completed
+        ); // print all to do items in each list
       }
     } else {
       console.log('This list contains no todo items');
@@ -27,7 +33,7 @@ const shoppingList = createTodoList('ShoppingList');
 const christmasList = createTodoList('Christmas Wish List');
 
 const item1 = createTodoItem(
-  'Item1',
+  'Buy Milk',
   'Get Soy or Oatmilk',
   'April 13 2024',
   shoppingList,
@@ -35,19 +41,22 @@ const item1 = createTodoItem(
 );
 
 const item2 = createTodoItem(
-  'Item2',
-  'Get Soy or Oatmilk',
+  'Buy Shoes',
+  'Store closes at 10 PM',
   'April 13 2024',
   general,
-  PRIORITIES.MEDIUM
+  PRIORITIES.MEDIUM,
+  false
 );
 
 const item3 = createTodoItem(
-  'Item3',
-  'Get Soy or Oatmilk',
+  'Buy a new hat',
+  'Store closed on weekends',
   'April 13 2024',
   general,
-  PRIORITIES.HIGH
+  PRIORITIES.HIGH,
+  true
 );
 
 printListOfProjects();
+const display = displayController();

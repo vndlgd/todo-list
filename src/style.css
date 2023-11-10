@@ -1,3 +1,58 @@
-h1 {
-  background-color: red;
+* {
+  margin: 0;
+  padding: 0;
+}
+
+:root {
+  font-size: 15px;
+  font-family: helvetica, sans-serif;
+  box-sizing: border-box;
+  font-family: Roboto, sans-serif;
+  font-weight: 300;
+  --green: rgb(67, 212, 140);
+  --gray: rgb(240, 240, 240);
+}
+
+#nav {
+  background-color: var(--green);
+  height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+#header {
+  color: white;
+  padding-left: 20px;
+  font-size: 1.5rem;
+}
+
+li {
+  list-style: none;
+}
+
+ul {
+  padding-top: 5px;
+  padding-bottom: 5px;
+}
+
+#sidebar {
+  background-color: var(--gray);
+  border-right: 1px solid rgb(184, 184, 184);
+}
+
+#projects {
+  padding-top: 20px;
+  padding-left: 20px;
+}
+
+#main-content {
+  display: grid;
+  grid-template-columns: 250px max-content;
+  height: 100vh;
+}
+
+#todo-items #list-name {
+  padding-top: 40px;
+  padding-left: 40px;
+  font-size: 1.5rem;
 }

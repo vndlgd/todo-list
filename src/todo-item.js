@@ -8,7 +8,8 @@ export function createTodoItem(
   description = '',
   dueDate = Date.now(),
   todoList = general, // if you don't specify which list, it goes into general
-  priority = PRIORITIES.LOW
+  priority = PRIORITIES.LOW,
+  completed = false
   // consider adding a checkbox = false to keep track of completion of task
 ) {
   const todoItemData = {
@@ -17,6 +18,7 @@ export function createTodoItem(
     dueDate,
     todoList,
     priority,
+    completed,
   };
 
   // push todoItemData into the corresponding todoList todos array
@@ -43,6 +45,10 @@ export function createTodoItem(
     priority = newPriority;
   }
 
+  function updateCompletion(newStatus) {
+    completed = newStatus;
+  }
+
   return {
     todoItemData,
     updateTitle,
@@ -50,6 +56,7 @@ export function createTodoItem(
     updateDueDate,
     updateTodoList,
     updatePriority,
+    updateCompletion,
   };
 }
 
