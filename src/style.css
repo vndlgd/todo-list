@@ -67,20 +67,20 @@ button {
   cursor: pointer;
 }
 
-#add-projects-button {
+#add-project-button {
   border: none;
   color: red;
   font-size: 1.5rem;
 }
 
-#add-projects-button:hover {
+#add-project-button:hover {
   color: rgba(255, 0, 0, 0.5);
   transform: scale(1.5);
 }
 
-#add-items-button {
-  width: 50px;
-  height: 50px;
+#add-task-button {
+  width: 40px;
+  height: 40px;
   font-size: 2em;
   font-weight: bold;
   border-radius: 50%;
@@ -90,11 +90,133 @@ button {
   position: fixed;
   bottom: 0;
   right: 0;
-  margin-bottom: 40px;
-  margin-right: 40px;
+  margin-bottom: 60px;
+  margin-right: 60px;
 }
 
-#add-items-button:hover {
-  filter: brightness(1.05);
+#add-task-button:hover {
+  filter: brightness(1.1);
   transform: scale(1.1);
+}
+
+#todo-items #new-task {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  outline: 0;
+  border-radius: 15px;
+  width: 50%;
+  height: 25%;
+}
+
+.modal-header {
+  background-color: var(--green);
+  color: white;
+  padding: 10px;
+  font-weight: 300;
+}
+
+#todo-items #new-task .formclass {
+  padding-left: 45px;
+  padding-right: 45px;
+  display: grid;
+  gap: 10px;
+}
+
+.formclass input:not(#due-date),
+.formclass textarea {
+  border-width: 0 0 1px;
+  font-family: Roboto, sans-serif;
+  padding: 5px;
+  font-size: 1rem;
+}
+
+.formclass #due-date {
+  border: none;
+  width: 250px;
+}
+
+.formclass textarea {
+  resize: none;
+}
+
+#new-task .formclass label {
+  width: 120px;
+}
+
+.formclass select {
+  background-color: var(--gray);
+  border: none;
+  width: 250px;
+}
+
+.formclass {
+  display: flex;
+  gap: 5px;
+}
+
+.formclass input[type='date'] {
+  box-sizing: border-box;
+  background-color: var(--gray);
+}
+
+.formclass #saveBtn {
+  background-color: var(--green);
+}
+
+.formclass #cancelBtn {
+  background-color: darkgray;
+}
+
+#new-task .formclass button {
+  margin-top: 10px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.formclass button {
+  color: white;
+  border: none;
+  border-radius: 15px;
+  font-weight: bold;
+}
+
+.formclass button:hover {
+  filter: brightness(1.1);
+}
+
+.form-buttons,
+#new-task .formclass div {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: center;
+  gap: 10px;
+}
+
+#new-project {
+  width: 250px;
+  border: none;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  outline: 0;
+  border-radius: 15px;
+  position: absolute;
+  top: 150px;
+  left: 250px;
+}
+
+#new-project .formclass {
+  display: grid;
+  justify-content: center;
+  align-items: center;
+}
+
+#new-project button {
+  padding: 5px 20px 5px 20px;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }

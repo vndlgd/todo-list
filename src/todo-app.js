@@ -3,7 +3,7 @@ import { createTodoItem, PRIORITIES } from './todo-item.js';
 import { createTodoList } from './todo-list.js';
 import { displayController } from './view.js';
 
-export const projects = []; // array that stores all todo-lists created
+export const projects = []; // stores all todo-lists created
 
 function printListOfProjects() {
   projects.forEach((list) => {

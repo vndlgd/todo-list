@@ -23,12 +23,79 @@
           </ul>
           <ul id="projects-sidebar-row">
             Projects
-            <button id="add-projects-button">+</button>
+            <dialog id="new-project">
+              <div class="modal-header">
+                <p>New Project</p>
+              </div>
+              <form class="formclass">
+                <label for="project-title"></label>
+                <input
+                  type="text"
+                  id="project-title"
+                  name="project-title"
+                  placeholder="Add title"
+                />
+                <div class="form-buttons">
+                  <button id="saveBtn" value="default">Save</button>
+                  <button id="cancelBtn" value="cancel" formmethod="dialog">
+                    Cancel
+                  </button>
+                </div>
+              </form>
+            </dialog>
+            <button id="add-project-button">+</button>
           </ul>
         </li>
       </div>
       <div id="todo-items">
-        <button id="add-items-button">+</button>
+        <dialog id="new-task">
+          <div class="modal-header">
+            <p>New Task</p>
+          </div>
+          <form class="formclass">
+            <label for="item-title"></label>
+            <input
+              type="text"
+              id="item-title"
+              name="item-title"
+              placeholder="Add title"
+            />
+            <label for="item-description"></label>
+            <textarea
+              id="item-description"
+              name="item-description"
+              rows="5"
+              cols="33"
+              placeholder="Add description"
+            ></textarea>
+            <div>
+              <label for="due-date">Due date:</label>
+              <input type="date" id="due-date" name="due-date" />
+            </div>
+            <div>
+              <label for="project-list">Add to project:</label>
+              <select name="project-list" id="project-list">
+                <option value="general">General</option>
+                <!-- Add options here dynamically each time we create a list -->
+              </select>
+            </div>
+            <div>
+              <label for="priority-level">Add priority level:</label>
+              <select name="priority-level" id="priority-level">
+                <option value="low">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            <div class="form-buttons">
+              <button id="saveBtn" value="default">Save</button>
+              <button id="cancelBtn" value="cancel" formmethod="dialog">
+                Cancel
+              </button>
+            </div>
+          </form>
+        </dialog>
+        <button id="add-task-button">+</button>
       </div>
     </div>
   </body>
