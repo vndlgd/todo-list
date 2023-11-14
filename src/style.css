@@ -5,7 +5,6 @@
 
 :root {
   font-size: 15px;
-  font-family: helvetica, sans-serif;
   box-sizing: border-box;
   font-family: Roboto, sans-serif;
   font-weight: 300;
@@ -26,23 +25,9 @@
   font-size: 1.5rem;
 }
 
-li {
-  list-style: none;
-}
-
-ul {
-  padding-top: 5px;
-  padding-bottom: 5px;
-}
-
 #sidebar {
   background-color: var(--gray);
   border-right: 1px solid rgb(184, 184, 184);
-}
-
-#projects {
-  padding-top: 20px;
-  padding-left: 20px;
 }
 
 #main-content {
@@ -51,31 +36,51 @@ ul {
   height: 100vh;
 }
 
-#todo-items #list-name {
+#todo-items #project-name {
   padding-top: 40px;
   padding-left: 40px;
   font-size: 1.5rem;
 }
 
-#projects-sidebar-row {
+.menu {
+  padding-top: 20px;
+  padding-left: 20px;
   display: flex;
-  justify-content: space-between;
-  padding-right: 20px;
+  align-items: center;
+  height: 20px;
 }
 
-button {
-  cursor: pointer;
+.menu button:nth-child(-n + 2) {
+  font-weight: 300;
+  font-size: 15px;
+  font-family: Roboto, sans-serif;
+  border: none;
 }
 
-#add-project-button {
+.menu button:nth-child(-n + 2):hover {
+  color: rgb(0 0 0 / 0.5);
+}
+
+.menu button:nth-child(3) {
   border: none;
   color: red;
   font-size: 1.5rem;
 }
 
-#add-project-button:hover {
+.menu button:nth-child(3):hover {
   color: rgba(255, 0, 0, 0.5);
   transform: scale(1.5);
+}
+
+.menu:nth-child(4) {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-right: 20px;
+}
+
+button {
+  cursor: pointer;
 }
 
 #add-task-button {
@@ -198,7 +203,7 @@ button {
   gap: 10px;
 }
 
-#new-project {
+#new-project-dialog {
   width: 250px;
   border: none;
   box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
@@ -209,13 +214,13 @@ button {
   left: 250px;
 }
 
-#new-project .formclass {
+#new-project-dialog .formclass {
   display: grid;
   justify-content: center;
   align-items: center;
 }
 
-#new-project button {
+#new-project-dialog button {
   padding: 5px 20px 5px 20px;
   margin-top: 10px;
   margin-bottom: 20px;

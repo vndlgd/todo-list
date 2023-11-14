@@ -11,41 +11,41 @@
     </div>
     <div id="main-content">
       <div id="sidebar">
-        <li id="projects">
-          <ul>
+        <div class="menu">
+          <button class="btn" id="initial-value" value="All Tasks">
             Tasks
-          </ul>
-          <ul>
-            Today
-          </ul>
-          <ul>
-            Next 7 Days
-          </ul>
-          <ul id="projects-sidebar-row">
-            Projects
-            <dialog id="new-project">
-              <div class="modal-header">
-                <p>New Project</p>
+          </button>
+        </div>
+        <div class="menu">
+          <button class="btn" value="Today">Today</button>
+        </div>
+        <div class="menu">
+          <button class="btn" value="Next 7 Days">Next 7 Days</button>
+        </div>
+        <div class="menu">
+          <p>Projects</p>
+          <dialog id="new-project-dialog">
+            <div class="modal-header">
+              <p>New Project</p>
+            </div>
+            <form class="formclass">
+              <label for="project-title"></label>
+              <input
+                type="text"
+                id="project-title"
+                name="project-title"
+                placeholder="Add title"
+              />
+              <div class="form-buttons">
+                <button id="saveBtn" value="default">Save</button>
+                <button id="cancelBtn" value="cancel" formmethod="dialog">
+                  Cancel
+                </button>
               </div>
-              <form class="formclass">
-                <label for="project-title"></label>
-                <input
-                  type="text"
-                  id="project-title"
-                  name="project-title"
-                  placeholder="Add title"
-                />
-                <div class="form-buttons">
-                  <button id="saveBtn" value="default">Save</button>
-                  <button id="cancelBtn" value="cancel" formmethod="dialog">
-                    Cancel
-                  </button>
-                </div>
-              </form>
-            </dialog>
-            <button id="add-project-button">+</button>
-          </ul>
-        </li>
+            </form>
+          </dialog>
+          <button id="add-project-button">+</button>
+        </div>
       </div>
       <div id="todo-items">
         <dialog id="new-task">
