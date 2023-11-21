@@ -1,10 +1,14 @@
+import { createTodoList } from './todo-list';
+import { projects } from './todo-app';
+import Icon from './icon.png';
+import { sub } from 'date-fns';
+
+const sidebar = document.getElementById('sidebar');
+const saveButton = document.getElementById('saveBtn');
+const cancelButton = document.getElementById('cancelBtn');
+
 // DisplayController factory function here
 export function displayController() {
-  // new Date needs to be the user's timezone
-  // then fix the length UI issue
-  const datePicker = (document.getElementById('due-date').valueAsDate =
-    new Date());
-
   // open and close task modal
   const newTaskModal = (function () {
     const addTodoItemButton = document.getElementById('add-task-button');
@@ -37,18 +41,70 @@ export function displayController() {
     });
   })();
 
+  const addProjectsToSubmenu = (function () {
+    const projectTitle = document.getElementById('project-title');
+    const cancelButton = document.getElementById('cancelBtn');
+    saveButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      // if projectTitle already in projects, do not add and alert user
+      const titleArray = projects.map(({ title }) => title);
+      if (titleArray.includes(projectTitle.value)) {
+        alert('That title already exists.');
+        // TODO: do not close modal on this condition
+        // if projectTitle is empty, do not add and alert user
+      } else if (projectTitle.value === '') {
+        alert('Please add title.');
+      } else {
+        // else, add to projects array
+        createTodoList(projectTitle.value);
+        displaySubmenu();
+      }
+      projectTitle.value = ''; // reset input after saving
+    });
+  })();
+
+  const clearInputAfterCancel = (function () {
+    const projectTitle = document.getElementById('project-title');
+    const cancelButton = document.getElementById('cancelBtn');
+    cancelButton.addEventListener('click', () => {
+      projectTitle.value = '';
+    });
+  })();
+
+  function displaySubmenu() {
+    for (let i = 0; i < projects.length - 1; i++) {
+      // to avoid duplicate values and errors
+      sidebar.removeChild(sidebar.lastChild); // clear sidebar added projects
+    }
+    projects.forEach((project) => {
+      const container = document.createElement('div');
+      const newProject = document.createElement('button');
+      const image = document.createElement('img');
+      image.src = Icon;
+      container.setAttribute('class', 'submenu');
+      newProject.setAttribute('class', 'btn');
+      newProject.setAttribute('value', project.title);
+      newProject.textContent = project.title;
+      container.appendChild(image);
+      container.appendChild(newProject);
+      sidebar.appendChild(container);
+    });
+  }
+
   // handle updating project header text on click
   const updateProjectHeader = (function () {
     const todoItemsDiv = document.getElementById('todo-items');
     const currentProjectHeader = document.createElement('p');
     currentProjectHeader.setAttribute('id', 'project-name');
-    const buttons = document.querySelectorAll('.btn');
+
     // have 'All Tasks' display as initial value on refresh
-    // TODO: have it handle the projects we create in the submenu as well
     const initialValue = document.getElementById('initial-value');
     currentProjectHeader.textContent = initialValue.value;
     todoItemsDiv.appendChild(currentProjectHeader);
-    buttons.forEach((button) => {
+
+    // TODO: include submenu buttons
+    const menuButtons = document.querySelectorAll('.menu > .btn');
+    menuButtons.forEach((button) => {
       button.addEventListener('click', (e) => {
         e.preventDefault();
         currentProjectHeader.textContent = e.target.value;
@@ -57,8 +113,7 @@ export function displayController() {
     });
   })();
 
-  // TODO: add new projects to submenu
-  // have a General project always present
+  displaySubmenu();
 
   return {};
 }

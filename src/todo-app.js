@@ -28,35 +28,35 @@ function printListOfProjects() {
 // export to enter items into this list when no list is provided
 export const general = createTodoList('General');
 
-// test
-const shoppingList = createTodoList('ShoppingList');
-const christmasList = createTodoList('Christmas Wish List');
+// // test
+// const shoppingList = createTodoList('ShoppingList');
+// const christmasList = createTodoList('Christmas Wish List');
 
-const item1 = createTodoItem(
-  'Buy Milk',
-  'Get Soy or Oatmilk',
-  'April 13 2024',
-  shoppingList,
-  PRIORITIES.LOW
-);
+// const item1 = createTodoItem(
+//   'Buy Milk',
+//   'Get Soy or Oatmilk',
+//   'April 13 2024',
+//   shoppingList,
+//   PRIORITIES.LOW
+// );
 
-const item2 = createTodoItem(
-  'Buy Shoes',
-  'Store closes at 10 PM',
-  'April 13 2024',
-  general,
-  PRIORITIES.MEDIUM,
-  false
-);
+// const item2 = createTodoItem(
+//   'Buy Shoes',
+//   'Store closes at 10 PM',
+//   'April 13 2024',
+//   general,
+//   PRIORITIES.MEDIUM,
+//   false
+// );
 
-const item3 = createTodoItem(
-  'Buy a new hat',
-  'Store closed on weekends',
-  'April 13 2024',
-  general,
-  PRIORITIES.HIGH,
-  true
-);
+// const item3 = createTodoItem(
+//   'Buy a new hat',
+//   'Store closed on weekends',
+//   'April 13 2024',
+//   general,
+//   PRIORITIES.HIGH,
+//   true
+// );
 
 printListOfProjects();
 const display = displayController();
