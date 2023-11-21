@@ -6,6 +6,7 @@ import { sub } from 'date-fns';
 const sidebar = document.getElementById('sidebar');
 const saveButton = document.getElementById('saveBtn');
 const cancelButton = document.getElementById('cancelBtn');
+const addProjectForm = document.getElementById('add-project-form');
 
 // DisplayController factory function here
 export function displayController() {
@@ -44,7 +45,9 @@ export function displayController() {
   const addProjectsToSubmenu = (function () {
     const projectTitle = document.getElementById('project-title');
     const cancelButton = document.getElementById('cancelBtn');
-    saveButton.addEventListener('click', (e) => {
+    const form = document.querySelector('.formclass');
+    // if changed to click event, works as should but modal closes
+    addProjectForm.addEventListener('submit', (e) => {
       e.preventDefault();
       // if projectTitle already in projects, do not add and alert user
       const titleArray = projects.map(({ title }) => title);
