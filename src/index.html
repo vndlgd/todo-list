@@ -37,8 +37,10 @@
                 placeholder="Add title"
               />
               <div class="form-buttons">
-                <button id="saveBtn" value="default">Save</button>
-                <button value="cancel" formmethod="dialog">Cancel</button>
+                <button class="saveBtn" value="default">Save</button>
+                <button class="cancelBtn" value="cancel" formmethod="dialog">
+                  Cancel
+                </button>
               </div>
             </form>
           </dialog>
@@ -46,6 +48,7 @@
         </div>
       </div>
       <div id="todo-items">
+        <p id="project-name"></p>
         <dialog id="new-task-dialog">
           <div class="modal-header">
             <p>New Task</p>
@@ -86,8 +89,10 @@
               </select>
             </div>
             <div class="form-buttons">
-              <button id="saveBtn" value="default">Save</button>
-              <button value="cancel" formmethod="dialog">Cancel</button>
+              <button class="saveBtn" value="default">Save</button>
+              <button class="cancelBtn" value="cancel" formmethod="dialog">
+                Cancel
+              </button>
             </div>
           </form>
         </dialog>

@@ -4,6 +4,12 @@ import Icon from './icon.png';
 
 const sidebar = document.getElementById('sidebar');
 
+// Initialize to all tasks on refresh
+const currentProjectHeader = document.querySelector('#project-name');
+const initialValue = document.getElementById('initial-value');
+
+currentProjectHeader.textContent = initialValue.value;
+
 // DisplayController factory function here
 export function displayController() {
   // open and close task modal
@@ -84,9 +90,6 @@ export function displayController() {
   const updateProjectHeader = function () {
     const currentProjectHeader = document.querySelector('#project-name');
     const buttons = document.querySelectorAll('.menu > .btn, .submenu > .btn');
-    const initialValue = document.getElementById('initial-value');
-
-    currentProjectHeader.textContent = initialValue.value;
 
     buttons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
