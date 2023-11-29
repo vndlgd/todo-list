@@ -192,7 +192,7 @@ button {
   background-color: var(--gray);
 }
 
-.formclass #saveBtn {
+.formclass .saveBtn {
   background-color: var(--green);
 }
 

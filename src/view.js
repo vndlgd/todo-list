@@ -3,16 +3,14 @@ import { projects } from './todo-app';
 import Icon from './icon.png';
 
 const sidebar = document.getElementById('sidebar');
-const saveButton = document.getElementById('saveBtn');
-const addProjectForm = document.getElementById('add-project-form');
 
 // DisplayController factory function here
 export function displayController() {
   // open and close task modal
-  const newTaskModal = (function () {
+  const newTaskModal = function () {
     const showButton = document.getElementById('add-task-button');
     const newTaskDialog = document.getElementById('new-task-dialog');
-    const saveBtn = newTaskDialog.querySelector('#saveBtn');
+    const saveBtn = newTaskDialog.querySelector('.saveBtn');
     const taskTitle = newTaskDialog.querySelector('#item-title');
 
     showButton.addEventListener('click', () => {
@@ -27,13 +25,13 @@ export function displayController() {
         newTaskDialog.close(); // TODO: finish this
       }
     });
-  })();
+  };
 
   // open and close project modal
-  const newProjectModal = (function () {
+  const newProjectModal = function () {
     const showButton = document.getElementById('add-project-button');
     const newProjectDialog = document.getElementById('new-project-dialog');
-    const saveBtn = newProjectDialog.querySelector('#saveBtn');
+    const saveBtn = newProjectDialog.querySelector('.saveBtn');
     const inputEl = newProjectDialog.querySelector('input');
 
     // Show dialog button opens <dialog> modally
@@ -56,10 +54,11 @@ export function displayController() {
       } else {
         createTodoList(inputEl.value);
         displaySubmenu();
+        updateProjectHeader();
         newProjectDialog.close(); // TODO: finish this
       }
     });
-  })();
+  };
 
   function displaySubmenu() {
     for (let i = 0; i < projects.length - 1; i++) {
@@ -82,27 +81,24 @@ export function displayController() {
   }
 
   // handle updating project header text on click
-  const updateProjectHeader = (function () {
-    const todoItems = document.querySelector('#todo-items');
-    const currentTodoListHeader = document.createElement('p');
-    currentTodoListHeader.setAttribute('id', 'project-name');
-    const buttons = document.querySelectorAll('.btn');
-
-    // set initial value upon refresh
+  const updateProjectHeader = function () {
+    const currentProjectHeader = document.querySelector('#project-name');
+    const buttons = document.querySelectorAll('.menu > .btn, .submenu > .btn');
     const initialValue = document.getElementById('initial-value');
-    currentTodoListHeader.textContent = initialValue.value;
-    todoItems.appendChild(currentTodoListHeader);
+
+    currentProjectHeader.textContent = initialValue.value;
 
     buttons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
-        console.log('works');
-        currentTodoListHeader.textContent = e.target.value;
-        todoItems.appendChild(currentTodoListHeader);
+        currentProjectHeader.textContent = e.target.value;
       });
     });
-  })();
+  };
 
+  newProjectModal();
+  newTaskModal();
   displaySubmenu();
+  updateProjectHeader();
 
   return {};
 }
