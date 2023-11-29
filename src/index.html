@@ -28,7 +28,7 @@
             <div class="modal-header">
               <p>New Project</p>
             </div>
-            <form id="add-project-form" class="formclass">
+            <form id="add-project-form" method="dialog" class="formclass">
               <label for="project-title"></label>
               <input
                 type="text"
@@ -37,10 +37,8 @@
                 placeholder="Add title"
               />
               <div class="form-buttons">
-                <button id="saveBtn" value="default" type="button">Save</button>
-                <button id="cancelBtn" value="cancel" formmethod="dialog">
-                  Cancel
-                </button>
+                <button id="saveBtn" value="default">Save</button>
+                <button value="cancel" formmethod="dialog">Cancel</button>
               </div>
             </form>
           </dialog>
@@ -48,11 +46,11 @@
         </div>
       </div>
       <div id="todo-items">
-        <dialog id="new-task">
+        <dialog id="new-task-dialog">
           <div class="modal-header">
             <p>New Task</p>
           </div>
-          <form class="formclass">
+          <form class="formclass" method="dialog">
             <label for="item-title"></label>
             <input
               type="text"
@@ -89,9 +87,7 @@
             </div>
             <div class="form-buttons">
               <button id="saveBtn" value="default">Save</button>
-              <button id="cancelBtn" value="cancel" formmethod="dialog">
-                Cancel
-              </button>
+              <button value="cancel" formmethod="dialog">Cancel</button>
             </div>
           </form>
         </dialog>

@@ -128,7 +128,7 @@ button {
   transform: scale(1.1);
 }
 
-#todo-items #new-task {
+#todo-items #new-task-dialog {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -148,7 +148,7 @@ button {
   font-weight: 300;
 }
 
-#todo-items #new-task .formclass {
+#todo-items #new-task-dialog .formclass {
   padding-left: 45px;
   padding-right: 45px;
   display: grid;
@@ -172,7 +172,7 @@ button {
   resize: none;
 }
 
-#new-task .formclass label {
+#new-task-dialog .formclass label {
   width: 120px;
 }
 
@@ -196,11 +196,11 @@ button {
   background-color: var(--green);
 }
 
-.formclass #cancelBtn {
+.formclass .cancelBtn {
   background-color: darkgray;
 }
 
-#new-task .formclass button {
+#new-task-dialog .formclass button {
   margin-top: 10px;
   padding-left: 25px;
   padding-right: 25px;
@@ -220,7 +220,7 @@ button {
 }
 
 .form-buttons,
-#new-task .formclass div {
+#new-task-dialog .formclass div {
   display: grid;
   grid-auto-flow: column;
   justify-content: center;

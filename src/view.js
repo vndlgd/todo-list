@@ -1,76 +1,63 @@
 import { createTodoList } from './todo-list';
 import { projects } from './todo-app';
 import Icon from './icon.png';
-import { sub } from 'date-fns';
 
 const sidebar = document.getElementById('sidebar');
 const saveButton = document.getElementById('saveBtn');
-const cancelButton = document.getElementById('cancelBtn');
 const addProjectForm = document.getElementById('add-project-form');
 
 // DisplayController factory function here
 export function displayController() {
   // open and close task modal
   const newTaskModal = (function () {
-    const addTodoItemButton = document.getElementById('add-task-button');
-    const taskDialog = document.querySelector('#new-task');
-    const taskCloseButton = document.querySelector('#new-task button');
+    const showButton = document.getElementById('add-task-button');
+    const newTaskDialog = document.getElementById('new-task-dialog');
+    const saveBtn = newTaskDialog.querySelector('#saveBtn');
+    const taskTitle = newTaskDialog.querySelector('#item-title');
 
-    addTodoItemButton.addEventListener('click', () => {
-      taskDialog.showModal();
+    showButton.addEventListener('click', () => {
+      newTaskDialog.showModal();
     });
 
-    taskCloseButton.addEventListener('click', () => {
-      taskDialog.close();
+    saveBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (taskTitle.value === '') {
+        alert('Please add title');
+      } else {
+        newTaskDialog.close(); // TODO: finish this
+      }
     });
   })();
 
   // open and close project modal
   const newProjectModal = (function () {
-    const addProjectsButton = document.getElementById('add-project-button');
-    const projectDialog = document.querySelector('#new-project-dialog');
-    const projectCloseButton = document.querySelector(
-      '#new-project-dialog button'
-    );
+    const showButton = document.getElementById('add-project-button');
+    const newProjectDialog = document.getElementById('new-project-dialog');
+    const saveBtn = newProjectDialog.querySelector('#saveBtn');
+    const inputEl = newProjectDialog.querySelector('input');
 
-    addProjectsButton.addEventListener('click', () => {
-      projectDialog.showModal();
+    // Show dialog button opens <dialog> modally
+    showButton.addEventListener('click', () => {
+      newProjectDialog.showModal();
     });
 
-    projectCloseButton.addEventListener('click', () => {
-      projectDialog.close();
+    newProjectDialog.addEventListener('close', (e) => {
+      inputEl.value = '';
     });
-  })();
 
-  const addProjectsToSubmenu = (function () {
-    const projectTitle = document.getElementById('project-title');
-    const cancelButton = document.getElementById('cancelBtn');
-    const form = document.querySelector('.formclass');
-    // if changed to click event, works as should but modal closes
-    addProjectForm.addEventListener('submit', (e) => {
+    // add projects to submenu
+    saveBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      // if projectTitle already in projects, do not add and alert user
       const titleArray = projects.map(({ title }) => title);
-      if (titleArray.includes(projectTitle.value)) {
-        alert('That title already exists.');
-        // TODO: do not close modal on this condition
-        // if projectTitle is empty, do not add and alert user
-      } else if (projectTitle.value === '') {
+      if (inputEl.value === '') {
         alert('Please add title.');
+      } else if (titleArray.includes(inputEl.value)) {
+        alert('That title already exists.');
       } else {
-        // else, add to projects array
-        createTodoList(projectTitle.value);
+        createTodoList(inputEl.value);
         displaySubmenu();
+        newProjectDialog.close(); // TODO: finish this
       }
-      projectTitle.value = ''; // reset input after saving
-    });
-  })();
-
-  const clearInputAfterCancel = (function () {
-    const projectTitle = document.getElementById('project-title');
-    const cancelButton = document.getElementById('cancelBtn');
-    cancelButton.addEventListener('click', () => {
-      projectTitle.value = '';
     });
   })();
 
@@ -96,22 +83,21 @@ export function displayController() {
 
   // handle updating project header text on click
   const updateProjectHeader = (function () {
-    const todoItemsDiv = document.getElementById('todo-items');
-    const currentProjectHeader = document.createElement('p');
-    currentProjectHeader.setAttribute('id', 'project-name');
+    const todoItems = document.querySelector('#todo-items');
+    const currentTodoListHeader = document.createElement('p');
+    currentTodoListHeader.setAttribute('id', 'project-name');
+    const buttons = document.querySelectorAll('.btn');
 
-    // have 'All Tasks' display as initial value on refresh
+    // set initial value upon refresh
     const initialValue = document.getElementById('initial-value');
-    currentProjectHeader.textContent = initialValue.value;
-    todoItemsDiv.appendChild(currentProjectHeader);
+    currentTodoListHeader.textContent = initialValue.value;
+    todoItems.appendChild(currentTodoListHeader);
 
-    // TODO: include submenu buttons
-    const menuButtons = document.querySelectorAll('.menu > .btn');
-    menuButtons.forEach((button) => {
-      button.addEventListener('click', (e) => {
-        e.preventDefault();
-        currentProjectHeader.textContent = e.target.value;
-        todoItemsDiv.appendChild(currentProjectHeader);
+    buttons.forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        console.log('works');
+        currentTodoListHeader.textContent = e.target.value;
+        todoItems.appendChild(currentTodoListHeader);
       });
     });
   })();
