@@ -23,14 +23,6 @@ export function createTodoList(title) {
     });
   }
 
-  function addTodoItem(todoItem) {
-    if (findItem(todoListData.title) === false) {
-      console.log('Error. This item is already included.');
-    } else {
-      todoListData.todos.push(todoItem);
-    }
-  }
-
   function deleteTodoItem(todoItem) {
     const itemSearched = findItem(todoListData.title); // itemSearched returns index
     if (itemSearched === false) {
@@ -40,5 +32,5 @@ export function createTodoList(title) {
     }
   }
 
-  return { todoListData, updateTodoListName, addTodoItem, deleteTodoItem };
+  return { todoListData, updateTodoListName, findItem, deleteTodoItem };
 }

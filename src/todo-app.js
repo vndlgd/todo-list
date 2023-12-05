@@ -24,11 +24,18 @@ function printListOfProjects() {
   });
 }
 
+function deleteTodoList() {
+  // TODO: CODE HERE
+  // button to remove list from projects array and also remove from UI
+  // but we cannot delete the general list
+  // only lists we create ourselves
+}
+
 // default list
 // export to enter items into this list when no list is provided
 export const general = createTodoList('General');
 
-// // test
+// test
 // const shoppingList = createTodoList('ShoppingList');
 // const christmasList = createTodoList('Christmas Wish List');
 

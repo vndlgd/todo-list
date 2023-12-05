@@ -1,13 +1,13 @@
 import { format } from 'date-fns';
-import { projects, general } from './todo-app';
-import { addTodoItem } from './todo-list';
+import { projects } from './todo-app';
+import { todoListData, addTodoItem } from './todo-list';
 
 // Create a todo object using factories (we will create as many as user wants)
 export function createTodoItem(
   title = '',
   description = '',
   dueDate = Date.now(),
-  todoList = general, // if you don't specify which list, it goes into general
+  todoList = projects[0].title, // if you don't specify which list, it goes into general
   priority = PRIORITIES.LOW,
   completed = false
   // consider adding a checkbox = false to keep track of completion of task
@@ -22,7 +22,12 @@ export function createTodoItem(
   };
 
   // push todoItemData into the corresponding todoList todos array
-  todoList.addTodoItem(todoItemData);
+  projects.forEach((list) => {
+    if (list.title === todoItemData.todoList) {
+      list.todos.push(todoItemData);
+      console.log(projects); // for debugging
+    }
+  });
 
   // functions to update each attribute
   function updateTitle(newTitle) {
