@@ -253,7 +253,7 @@ button {
   margin-bottom: 20px;
 }
 
-.todoDiv {
+.todo {
   border-bottom: 1px solid var(--gray);
   display: grid;
   grid-template-columns: auto 1fr auto 100px auto;
@@ -263,7 +263,7 @@ button {
   padding: 15px;
 }
 
-.todoDiv:hover {
+.todo:hover {
   background-color: var(--gray);
 }
 
@@ -272,4 +272,34 @@ button {
   width: 15px;
   border-radius: 50%;
   display: inline-block;
+}
+
+.todo-expanded {
+  grid-column: 1/6;
+  font-size: 0.9rem;
+  font-style: italic;
+}
+
+.description-container {
+  padding-left: 40px;
+}
+
+.buttons-container {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: end;
+  gap: 5px;
+}
+
+.buttons-container button {
+  background-color: white;
+  border: 1px solid gray;
+  color: gray;
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.buttons-container button:hover {
+  border: 1px solid orange;
+  color: orange;
 }

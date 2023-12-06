@@ -138,7 +138,7 @@ export function displayController() {
   ) {
     const todoItems = document.querySelector('#todo-items');
     const task = document.createElement('div');
-    task.setAttribute('class', 'todoDiv');
+    task.setAttribute('class', 'todo');
 
     const checkbox = document.createElement('input');
     checkbox.type = 'checkbox';
@@ -167,6 +167,44 @@ export function displayController() {
     } else if (priority === 'high') {
       currentPriority.style.backgroundColor = 'red';
     }
+
+    // create clickable div to expand and show description and buttons
+    const todoExpanded = document.createElement('div');
+    todoExpanded.setAttribute('class', 'todo-expanded');
+
+    const descriptionContainer = document.createElement('div');
+    descriptionContainer.setAttribute('class', 'description-container');
+    descriptionContainer.appendChild(currentTaskDescription);
+    todoExpanded.appendChild(descriptionContainer);
+
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.setAttribute('class', 'buttons-container');
+    const editBtn = document.createElement('button');
+    const deleteBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    deleteBtn.textContent = 'Delete';
+    buttonsContainer.appendChild(editBtn);
+    buttonsContainer.appendChild(deleteBtn);
+    todoExpanded.appendChild(buttonsContainer);
+
+    editBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('this button should open menu to edit task info');
+    });
+
+    deleteBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      console.log('this task should be deleted');
+    });
+
+    task.addEventListener('click', (e) => {
+      e.preventDefault();
+      if (task.contains(todoExpanded)) {
+        task.removeChild(task.lastChild);
+      } else {
+        task.appendChild(todoExpanded);
+      }
+    });
 
     task.appendChild(checkbox);
     task.appendChild(currentTaskTitle);
