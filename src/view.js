@@ -1,11 +1,11 @@
 import { createTodoList } from './todo-list';
 import { createTodoItem } from './todo-item';
-import { deleteTodoItem } from './todo-app';
 import { projects } from './todo-app';
-import { format } from 'date-fns';
+import { format, addWeeks } from 'date-fns';
 import Icon from './icon.png';
 
 const sidebar = document.getElementById('sidebar');
+const today = format(new Date(), 'yyyy-MM-dd');
 
 // Initialize to all tasks on refresh
 const currentProjectHeader = document.querySelector('#project-name');
@@ -40,8 +40,7 @@ export function displayController() {
         option.text = list.title;
         projectList.appendChild(option);
       });
-      const today = new Date();
-      dueDate.value = format(today, 'yyyy-MM-dd');
+      dueDate.value = today;
       newTaskDialog.showModal();
     });
 
@@ -64,7 +63,15 @@ export function displayController() {
           projectList.value,
           priority.value
         );
-        displayTask(taskTitle, taskDescription, dueDate, projectList, priority);
+        // TODO: only create task when you want to display them
+        // createTask(
+        //   taskTitle.value,
+        //   taskDescription.value,
+        //   dueDate.value,
+        //   projectList.value,
+        //   priority.value
+        // );
+        displayTasks(currentProjectHeader.textContent);
         newTaskDialog.close();
       }
     });
@@ -126,7 +133,7 @@ export function displayController() {
     });
   }
 
-  function displayTask(
+  function createTask(
     taskTitle,
     taskDescription,
     dueDate,
@@ -134,6 +141,7 @@ export function displayController() {
     priority
   ) {
     const todoItems = document.querySelector('#todo-items');
+    const taskContainer = document.querySelector('#taskContainer');
     const task = document.createElement('div');
     task.setAttribute('class', 'todo');
 
@@ -147,16 +155,16 @@ export function displayController() {
     });
 
     const currentTaskTitle = document.createElement('span');
-    currentTaskTitle.textContent = taskTitle.value;
+    currentTaskTitle.textContent = taskTitle;
 
     const currentTaskDescription = document.createElement('span');
-    currentTaskDescription.textContent = taskDescription.value;
+    currentTaskDescription.textContent = taskDescription;
 
     const currentDueDate = document.createElement('span');
-    currentDueDate.textContent = dueDate.value;
+    currentDueDate.textContent = dueDate;
 
     const currentProjectList = document.createElement('span');
-    currentProjectList.textContent = projectList.value;
+    currentProjectList.textContent = projectList;
 
     const currentPriority = document.createElement('span');
     currentPriority.setAttribute('class', 'dot');
@@ -188,6 +196,7 @@ export function displayController() {
     buttonsContainer.appendChild(deleteBtn);
     todoExpanded.appendChild(buttonsContainer);
 
+    // TODO: finish this function
     editBtn.addEventListener('click', (e) => {
       e.preventDefault();
       console.log('this button should open menu to edit task info');
@@ -196,7 +205,7 @@ export function displayController() {
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault();
       projects.forEach((list) => {
-        if (list.title === projectList.value) {
+        if (list.title === projectList) {
           list.todos.forEach((todo, index) => {
             list.todos.splice(index, 1);
             console.log('Deleted task!');
@@ -204,8 +213,7 @@ export function displayController() {
           });
         }
       });
-      todoItems.removeChild(task);
-      // DELETE SPECIFIC NODE
+      taskContainer.removeChild(task);
     });
 
     task.addEventListener('click', (e) => {
@@ -223,10 +231,65 @@ export function displayController() {
     task.appendChild(currentProjectList);
     task.appendChild(currentPriority);
 
-    // TODO:
-    // handle where we display each task
-    // for example, if we click general, remove all tasks that do not have general as their list
-    todoItems.appendChild(task);
+    taskContainer.appendChild(task);
+  }
+
+  function displayTasks(menuOption) {
+    const taskContainer = document.querySelector('#taskContainer');
+
+    // clear taskContainer list to display updated task list for chosen todo list
+    while (taskContainer.hasChildNodes()) {
+      taskContainer.removeChild(taskContainer.firstChild);
+    }
+
+    const sevenDaysFromNow = format(addWeeks(new Date(), 1), 'yyyy-MM-dd');
+
+    projects.forEach((list) => {
+      list.todos.forEach((todo) => {
+        if (menuOption === 'All Tasks') {
+          createTask(
+            todo.title,
+            todo.description,
+            todo.dueDate,
+            todo.todoList,
+            todo.priority
+          );
+        } else if (menuOption === 'Today') {
+          if (todo.dueDate === today) {
+            createTask(
+              todo.title,
+              todo.description,
+              todo.dueDate,
+              todo.todoList,
+              todo.priority
+            );
+          }
+          // find way to find within a range
+        } else if (menuOption === 'Next 7 Days') {
+          if (todo.dueDate >= today && todo.dueDate <= sevenDaysFromNow) {
+            createTask(
+              todo.title,
+              todo.description,
+              todo.dueDate,
+              todo.todoList,
+              todo.priority
+            );
+          }
+        } else {
+          if (menuOption === todo.todoList) {
+            createTask(
+              todo.title,
+              todo.description,
+              todo.dueDate,
+              todo.todoList,
+              todo.priority
+            );
+          }
+        }
+      });
+    });
+    // code here and only loop through list we chose
+    // only print those
   }
 
   // handle updating project header text on click
@@ -237,6 +300,8 @@ export function displayController() {
     buttons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
         currentProjectHeader.textContent = e.target.value;
+        console.log(btn.value);
+        displayTasks(btn.value);
       });
     });
   };
