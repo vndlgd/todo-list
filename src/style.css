@@ -275,7 +275,7 @@ button {
 }
 
 .todo-expanded {
-  grid-column: 1/6;
+  grid-column: 1/6; /* why does this work? */
   font-size: 0.9rem;
   font-style: italic;
 }

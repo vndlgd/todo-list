@@ -1,5 +1,6 @@
 import { createTodoList } from './todo-list';
 import { createTodoItem } from './todo-item';
+import { deleteTodoItem } from './todo-app';
 import { projects } from './todo-app';
 import { format } from 'date-fns';
 import Icon from './icon.png';
@@ -63,13 +64,7 @@ export function displayController() {
           projectList.value,
           priority.value
         );
-        displayTask(
-          taskTitle.value,
-          taskDescription.value,
-          dueDate.value,
-          projectList.value,
-          priority.value
-        );
+        displayTask(taskTitle, taskDescription, dueDate, projectList, priority);
         newTaskDialog.close();
       }
     });
@@ -107,6 +102,8 @@ export function displayController() {
         newProjectDialog.close();
       }
     });
+
+    return {};
   };
 
   function displaySubmenu() {
@@ -141,21 +138,25 @@ export function displayController() {
     task.setAttribute('class', 'todo');
 
     const checkbox = document.createElement('input');
-    checkbox.type = 'checkbox';
-    checkbox.setAttribute('class', 'checkbox');
-    checkbox.setAttribute('name', 'checkbox');
+    checkbox.setAttribute('type', 'checkbox');
+    checkbox.name = 'task-checkbox';
+    checkbox.setAttribute('class', 'task-checkbox');
+
+    checkbox.addEventListener('click', (e) => {
+      checkbox.checked = true;
+    });
 
     const currentTaskTitle = document.createElement('span');
-    currentTaskTitle.textContent = taskTitle;
+    currentTaskTitle.textContent = taskTitle.value;
 
     const currentTaskDescription = document.createElement('span');
-    currentTaskDescription.textContent = taskDescription;
+    currentTaskDescription.textContent = taskDescription.value;
 
     const currentDueDate = document.createElement('span');
-    currentDueDate.textContent = dueDate;
+    currentDueDate.textContent = dueDate.value;
 
     const currentProjectList = document.createElement('span');
-    currentProjectList.textContent = projectList;
+    currentProjectList.textContent = projectList.value;
 
     const currentPriority = document.createElement('span');
     currentPriority.setAttribute('class', 'dot');
@@ -194,7 +195,17 @@ export function displayController() {
 
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log('this task should be deleted');
+      projects.forEach((list) => {
+        if (list.title === projectList.value) {
+          list.todos.forEach((todo, index) => {
+            list.todos.splice(index, 1);
+            console.log('Deleted task!');
+            console.log(projects); // for debugging
+          });
+        }
+      });
+      todoItems.removeChild(task);
+      // DELETE SPECIFIC NODE
     });
 
     task.addEventListener('click', (e) => {
@@ -208,7 +219,6 @@ export function displayController() {
 
     task.appendChild(checkbox);
     task.appendChild(currentTaskTitle);
-    // task.appendChild(currentTaskDescription); TODO: only when button is clicked
     task.appendChild(currentDueDate);
     task.appendChild(currentProjectList);
     task.appendChild(currentPriority);

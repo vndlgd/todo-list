@@ -13,24 +13,5 @@ export function createTodoList(title) {
     todoListData.title = newTitle;
   }
 
-  function findItem(title) {
-    todoListData.todos.forEach((item, index) => {
-      if (item.title === title) {
-        return index;
-      } else {
-        return false;
-      }
-    });
-  }
-
-  function deleteTodoItem(todoItem) {
-    const itemSearched = findItem(todoListData.title); // itemSearched returns index
-    if (itemSearched === false) {
-      console.log('Error. This item is not found.');
-    } else {
-      todoListData.todos.splice(itemSearched, 1);
-    }
-  }
-
-  return { todoListData, updateTodoListName, findItem, deleteTodoItem };
+  return { todoListData, updateTodoListName };
 }
