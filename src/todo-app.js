@@ -24,11 +24,18 @@ function printListOfProjects() {
   });
 }
 
-function deleteTodoList() {
-  // TODO: CODE HERE
-  // button to remove list from projects array and also remove from UI
-  // but we cannot delete the general list
-  // only lists we create ourselves
+export function deleteTodoList(listToDelete) {
+  for (let i = 0; i < projects.length; i++) {
+    console.log(listToDelete);
+    console.log(projects[i].title);
+    console.log(listToDelete === projects[i].title);
+    if (projects[i].title === listToDelete) {
+      projects.splice(i, 1);
+      console.log('we should only be calling once');
+      console.log('deleted!');
+    }
+  }
+  console.log(projects); // for debugging
 }
 
 // default list

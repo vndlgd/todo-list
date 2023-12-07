@@ -1,16 +1,16 @@
 import { createTodoList } from './todo-list';
 import { createTodoItem } from './todo-item';
-import { projects } from './todo-app';
+import { projects, deleteTodoList } from './todo-app';
 import { format, addWeeks } from 'date-fns';
 import Icon from './icon.png';
 
 const sidebar = document.getElementById('sidebar');
 const today = format(new Date(), 'yyyy-MM-dd');
 
-// Initialize to all tasks on refresh
 const currentProjectHeader = document.querySelector('#project-name');
 const initialValue = document.getElementById('initial-value');
 
+// Initialize to 'All Tasks' on refresh
 currentProjectHeader.textContent = initialValue.value;
 
 // DisplayController factory function here
@@ -29,8 +29,10 @@ export function displayController() {
     const priority = newTaskDialog.querySelector('#priority-level');
 
     showButton.addEventListener('click', () => {
-      for (let i = 0; i < projects.length; i++) {
+      // TODO: this while loop may be causing errors...
+      while (projectList.hasChildNodes()) {
         // to avoid duplicate values and errors
+        console.log(projectList.lastChild);
         projectList.removeChild(projectList.lastChild); // clear sidebar added projects
       }
       // dynamically create a drop-down list with list options
@@ -47,6 +49,9 @@ export function displayController() {
     newTaskDialog.addEventListener('close', (e) => {
       taskTitle.value = '';
       taskDescription.value = '';
+      // reset priority to low each time
+      const defaultPriority = document.querySelector('#default-priority');
+      priority.value = defaultPriority.value;
     });
 
     saveBtn.addEventListener('click', (e) => {
@@ -55,7 +60,9 @@ export function displayController() {
       if (taskTitle.value === '') {
         alert('Please add title.');
         // TODO: Figure out how to add a duplicate title condition
+        // go through ALL todo titles in every list, if duplicate is found, alert user
       } else {
+        console.log(currentProjectHeader.textContent);
         createTodoItem(
           taskTitle.value,
           taskDescription.value,
@@ -63,15 +70,9 @@ export function displayController() {
           projectList.value,
           priority.value
         );
-        // TODO: only create task when you want to display them
-        // createTask(
-        //   taskTitle.value,
-        //   taskDescription.value,
-        //   dueDate.value,
-        //   projectList.value,
-        //   priority.value
-        // );
+        // display tasks when we create new task and haven't clicked any menu items
         displayTasks(currentProjectHeader.textContent);
+        console.log(' ------ '); // for clarity in console debugging
         newTaskDialog.close();
       }
     });
@@ -106,6 +107,7 @@ export function displayController() {
         displaySubmenu();
         updateProjectHeader();
         console.log(projects);
+        console.log(' ------ '); // for clarity in console debugging
         newProjectDialog.close();
       }
     });
@@ -114,8 +116,10 @@ export function displayController() {
   };
 
   function displaySubmenu() {
+    // TODO: figure out what bottom for loop does
     for (let i = 0; i < projects.length - 1; i++) {
       // to avoid duplicate values and errors
+      console.log('i was just called');
       sidebar.removeChild(sidebar.lastChild); // clear sidebar added projects
     }
     projects.forEach((project) => {
@@ -124,9 +128,15 @@ export function displayController() {
       const image = document.createElement('img');
       image.src = Icon;
       container.setAttribute('class', 'submenu');
+      container.setAttribute('id', project.title);
       newProject.setAttribute('class', 'btn');
       newProject.setAttribute('value', project.title);
       newProject.textContent = project.title;
+
+      if (project.title !== 'General') {
+        newProject.classList.add('new');
+      }
+
       container.appendChild(image);
       container.appendChild(newProject);
       sidebar.appendChild(container);
@@ -200,6 +210,7 @@ export function displayController() {
     editBtn.addEventListener('click', (e) => {
       e.preventDefault();
       console.log('this button should open menu to edit task info');
+      // call functions that edit these parameters in a pop up form
     });
 
     deleteBtn.addEventListener('click', (e) => {
@@ -288,20 +299,60 @@ export function displayController() {
         }
       });
     });
-    // code here and only loop through list we chose
-    // only print those
   }
 
   // handle updating project header text on click
   const updateProjectHeader = function () {
-    const currentProjectHeader = document.querySelector('#project-name');
+    // const currentProjectHeader = document.querySelector('#project-name');
     const buttons = document.querySelectorAll('.menu > .btn, .submenu > .btn');
+    const buttonDivs = document.querySelectorAll('.submenu');
 
+    const showButton = document.createElement('button');
+    showButton.setAttribute('id', 'projectDeleteBtn');
+    showButton.textContent = 'X';
+
+    const deleteListDialog = document.getElementById('delete-list-dialog');
+    const deleteBtn = deleteListDialog.querySelector('#deleteBtn');
+
+    // add delete button to each new list we create
     buttons.forEach((btn) => {
       btn.addEventListener('click', (e) => {
+        // change project header to whatever list we click
         currentProjectHeader.textContent = e.target.value;
-        console.log(btn.value);
-        displayTasks(btn.value);
+        // if has submenu class and is not general
+        // add delete list button next to header
+        if (
+          e.target.classList.contains('btn') &&
+          e.target.value !== 'General' &&
+          e.target.value !== 'Next 7 Days' &&
+          e.target.value !== 'Today' &&
+          e.target.value !== 'All Tasks'
+        ) {
+          currentProjectHeader.appendChild(showButton);
+        }
+        displayTasks(btn.value); // display tasks of list we choose
+      });
+    });
+
+    // show modal to delete list
+    showButton.addEventListener('click', (e) => {
+      e.preventDefault();
+      deleteListDialog.showModal();
+    });
+
+    // delete list in UI and in projects array
+    buttonDivs.forEach((div) => {
+      deleteBtn.addEventListener('click', (e) => {
+        if (currentProjectHeader.firstChild.textContent === div.id) {
+          console.log('Deleting:', div.id);
+          // if i make 3 lists, and delete the 3rd one, then the 2nd, the 2nd wont delete
+          // in the UI
+          div.remove();
+          deleteTodoList(currentProjectHeader.firstChild.textContent);
+          currentProjectHeader.textContent = 'All Tasks';
+          displayTasks('All Tasks');
+          deleteListDialog.close();
+        }
       });
     });
   };
