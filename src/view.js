@@ -116,12 +116,18 @@ export function displayController() {
   };
 
   function displaySubmenu() {
-    // TODO: figure out what bottom for loop does
-    for (let i = 0; i < projects.length - 1; i++) {
-      // to avoid duplicate values and errors
-      console.log('i was just called');
-      sidebar.removeChild(sidebar.lastChild); // clear sidebar added projects
-    }
+    const submenu = document.querySelectorAll('.submenu');
+    submenu.forEach((item) => {
+      sidebar.removeChild(item);
+      console.log('deleted: ', item);
+    });
+    // // TODO: clear everything except general
+    // for (let i = 0; i < projects.length - 1; i++) {
+    //   // to avoid duplicate values and errors
+    //   console.log('i was just called');
+    //   console.log(sidebar.lastChild);
+    //   sidebar.removeChild(sidebar.lastChild); // clear sidebar added projects
+    // }
     projects.forEach((project) => {
       const container = document.createElement('div');
       const newProject = document.createElement('button');
@@ -139,7 +145,9 @@ export function displayController() {
 
       container.appendChild(image);
       container.appendChild(newProject);
+      console.log('added: ', newProject);
       sidebar.appendChild(container);
+      updateProjectHeader();
     });
   }
 
@@ -319,6 +327,7 @@ export function displayController() {
       btn.addEventListener('click', (e) => {
         // change project header to whatever list we click
         currentProjectHeader.textContent = e.target.value;
+        console.log(btn.value);
         // if has submenu class and is not general
         // add delete list button next to header
         if (
@@ -340,6 +349,7 @@ export function displayController() {
       deleteListDialog.showModal();
     });
 
+    console.log(buttonDivs);
     // delete list in UI and in projects array
     buttonDivs.forEach((div) => {
       deleteBtn.addEventListener('click', (e) => {
@@ -347,8 +357,8 @@ export function displayController() {
           console.log('Deleting:', div.id);
           // if i make 3 lists, and delete the 3rd one, then the 2nd, the 2nd wont delete
           // in the UI
-          div.remove();
           deleteTodoList(currentProjectHeader.firstChild.textContent);
+          displaySubmenu();
           currentProjectHeader.textContent = 'All Tasks';
           displayTasks('All Tasks');
           deleteListDialog.close();
@@ -360,7 +370,7 @@ export function displayController() {
   newProjectModal();
   newTaskModal();
   displaySubmenu();
-  updateProjectHeader();
+  // updateProjectHeader();
 
   return {};
 }
