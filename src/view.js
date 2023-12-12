@@ -1,6 +1,6 @@
 import { createTodoList } from './todo-list';
 import { createTodoItem } from './todo-item';
-import { projects, deleteTodoList } from './todo-app';
+import { projects, deleteTodoList, taskNameExists } from './todo-app';
 import { format, addWeeks } from 'date-fns';
 import Icon from './icon.png';
 
@@ -55,11 +55,13 @@ export function displayController() {
 
     saveBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      const titleArray = projects.map(({ title }) => title);
+      console.log(taskTitle.value);
+      // const titleArray = projects.map(({ title }) => title);
       if (taskTitle.value === '') {
         alert('Please add title.');
-        // TODO: Figure out how to add a duplicate title condition
         // go through ALL todo titles in every list, if duplicate is found, alert user
+      } else if (taskNameExists(taskTitle.value)) {
+        alert('That title already exists.');
       } else {
         createTodoItem(
           taskTitle.value,
@@ -332,7 +334,6 @@ export function displayController() {
           }
         } else {
           if (menuOption === todo.todoList) {
-            console.log('are we good?');
             createTask(
               todo.title,
               todo.description,

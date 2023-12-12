@@ -38,6 +38,18 @@ export function deleteTodoList(listToDelete) {
   console.log(projects); // for debugging
 }
 
+export function taskNameExists(taskName) {
+  let exists = false;
+  projects.forEach((list) => {
+    list.todos.forEach((task) => {
+      if (task.title === taskName) {
+        exists = true;
+      }
+    });
+  });
+  return exists;
+}
+
 // default list
 // export to enter items into this list when no list is provided
 export const general = createTodoList('General');
