@@ -62,7 +62,6 @@ export function displayController() {
         // TODO: Figure out how to add a duplicate title condition
         // go through ALL todo titles in every list, if duplicate is found, alert user
       } else {
-        console.log(currentProjectHeader.textContent);
         createTodoItem(
           taskTitle.value,
           taskDescription.value,
@@ -71,7 +70,9 @@ export function displayController() {
           priority.value
         );
         // display tasks when we create new task and haven't clicked any menu items
-        displayTasks(currentProjectHeader.textContent);
+        console.log(currentProjectHeader.firstChild.textContent);
+        displayTasks(currentProjectHeader.firstChild.textContent);
+        // updateProjectHeader();
         console.log(' ------ '); // for clarity in console debugging
         newTaskDialog.close();
       }
@@ -253,6 +254,7 @@ export function displayController() {
     taskContainer.appendChild(task);
   }
 
+  // TODO: FIX , why isn't it dispalying upon clicking save?
   function displayTasks(menuOption) {
     const taskContainer = document.querySelector('#taskContainer');
 
@@ -296,6 +298,7 @@ export function displayController() {
           }
         } else {
           if (menuOption === todo.todoList) {
+            console.log('are we good?');
             createTask(
               todo.title,
               todo.description,
@@ -370,7 +373,7 @@ export function displayController() {
   newProjectModal();
   newTaskModal();
   displaySubmenu();
-  // updateProjectHeader();
+  updateProjectHeader();
 
   return {};
 }
