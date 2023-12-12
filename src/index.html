@@ -103,7 +103,7 @@
             <div>
               <label for="priority-level">Add priority level:</label>
               <select name="priority-level" id="priority-level">
-                <option value="low" id="default-priority">Low</option>
+                <option value="low" class="default-priority">Low</option>
                 <option value="medium">Medium</option>
                 <option value="high">High</option>
               </select>
@@ -119,6 +119,48 @@
         <div id="taskContainer"></div>
         <button id="add-task-button">+</button>
         <!-- Write edit task dialog modal here         -->
+        <dialog id="edit-task-dialog">
+          <div class="modal-header">
+            <p>Edit Task</p>
+          </div>
+          <form class="formclass">
+            <label for="edit-item-title"></label>
+            <input
+              type="text"
+              id="edit-item-title"
+              name="edit-item-title"
+            />
+            <label for="edit-item-description"></label>
+            <textarea
+              id="edit-item-description"
+              name="edit-item-description"
+              rows="5"
+              cols="33"
+            ></textarea>
+            <div>
+              <label for="edit-due-date">Due date:</label>
+              <input type="date" id="edit-due-date" name="edit-due-date" />
+            </div>
+            <div>
+              <label for="edit-project-list">Add to project:</label>
+              <select name="edit-project-list" id="edit-project-list">
+                <!-- Add options here dynamically each time we create a list -->
+              </select>
+            </div>
+            <div>
+              <label for="edit-priority-level">Add priority level:</label>
+              <select name="edit-priority-level" id="edit-priority-level">
+                <option value="low" class="default-priority">Low</option>
+                <option value="medium">Medium</option>
+                <option value="high">High</option>
+              </select>
+            </div>
+            <div class="form-buttons">
+              <button class="saveBtn" value="default">Save</button>
+              <button class="cancelBtn" value="cancel" formmethod="dialog">
+                Cancel
+              </button> 
+        </dialog>
       </div>
     </div>
   </body>

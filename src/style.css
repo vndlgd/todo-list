@@ -360,3 +360,50 @@ button {
   display: grid;
   gap: 10px;
 }
+
+#edit-task-dialog {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: none;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  outline: 0;
+  border-radius: 15px;
+  width: 50%;
+  height: 25%;
+}
+
+#todo-items #edit-task-dialog .formclass {
+  padding-left: 45px;
+  padding-right: 45px;
+  display: grid;
+  gap: 10px;
+}
+
+#edit-task-dialog .modal-header {
+  background-color: orange;
+  color: white;
+  padding: 10px;
+  font-weight: 300;
+}
+
+#edit-task-dialog .formclass label {
+  width: 120px;
+}
+
+#edit-task-dialog .formclass button {
+  margin-top: 10px;
+  padding-left: 25px;
+  padding-right: 25px;
+  padding-top: 15px;
+  padding-bottom: 15px;
+}
+
+.form-buttons,
+#edit-task-dialog .formclass div {
+  display: grid;
+  grid-auto-flow: column;
+  justify-content: center;
+  gap: 10px;
+}

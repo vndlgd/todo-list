@@ -29,7 +29,6 @@ export function displayController() {
     const priority = newTaskDialog.querySelector('#priority-level');
 
     showButton.addEventListener('click', () => {
-      // TODO: this while loop may be causing errors...
       while (projectList.hasChildNodes()) {
         // to avoid duplicate values and errors
         console.log(projectList.lastChild);
@@ -50,7 +49,7 @@ export function displayController() {
       taskTitle.value = '';
       taskDescription.value = '';
       // reset priority to low each time
-      const defaultPriority = document.querySelector('#default-priority');
+      const defaultPriority = document.querySelector('.default-priority');
       priority.value = defaultPriority.value;
     });
 
@@ -122,13 +121,6 @@ export function displayController() {
       sidebar.removeChild(item);
       console.log('deleted: ', item);
     });
-    // // TODO: clear everything except general
-    // for (let i = 0; i < projects.length - 1; i++) {
-    //   // to avoid duplicate values and errors
-    //   console.log('i was just called');
-    //   console.log(sidebar.lastChild);
-    //   sidebar.removeChild(sidebar.lastChild); // clear sidebar added projects
-    // }
     projects.forEach((project) => {
       const container = document.createElement('div');
       const newProject = document.createElement('button');
@@ -215,11 +207,53 @@ export function displayController() {
     buttonsContainer.appendChild(deleteBtn);
     todoExpanded.appendChild(buttonsContainer);
 
-    // TODO: finish this function
+    // Functionality for editing task
+    // TODO: consider splitting this into smaller functions
+    // it all looks too jumbled up
+
+    const editTaskDialog = document.querySelector('#edit-task-dialog');
+    const editTaskTitle = editTaskDialog.querySelector('#edit-item-title');
+    const editTaskDescription = editTaskDialog.querySelector(
+      '#edit-item-description'
+    );
+    let editPriority = editTaskDialog.querySelector('#edit-priority-level');
+    const defaultPriority = document.querySelector('.default-priority');
+    let editProjectList = editTaskDialog.querySelector('select');
+    let editDueDue = editTaskDialog.querySelector('#edit-due-date');
+
+    const saveTaskEdit = editTaskDialog.querySelector('.saveBtn');
+
     editBtn.addEventListener('click', (e) => {
       e.preventDefault();
-      console.log('this button should open menu to edit task info');
+      while (editProjectList.hasChildNodes()) {
+        // to avoid duplicate values and errors
+        editProjectList.removeChild(editProjectList.lastChild); // clear sidebar added projects
+      }
+      // dynamically create a drop-down list with list options
+      projects.forEach((list) => {
+        const option = document.createElement('option');
+        option.value = list.title;
+        option.text = list.title;
+        editProjectList.appendChild(option);
+      });
+      editTaskTitle.value = taskTitle;
+      editTaskDescription.value = taskDescription;
+      editDueDue.value = dueDate;
+      editProjectList.value = projectList;
+      editPriority.value = priority;
+      editTaskDialog.showModal();
       // call functions that edit these parameters in a pop up form
+    });
+
+    // display current values
+    editTaskDialog.addEventListener('close', (e) => {});
+
+    saveTaskEdit.addEventListener('click', (e) => {
+      e.preventDefault();
+      // TODO: edit the values in the projects array
+      // TODO: re-render everything in the dom
+      // TODO: create function perhaps?
+      editTaskDialog.close();
     });
 
     deleteBtn.addEventListener('click', (e) => {
@@ -236,6 +270,7 @@ export function displayController() {
       taskContainer.removeChild(task);
     });
 
+    // expand and hide task description and buttons on click
     task.addEventListener('click', (e) => {
       e.preventDefault();
       if (task.contains(todoExpanded)) {
@@ -254,7 +289,6 @@ export function displayController() {
     taskContainer.appendChild(task);
   }
 
-  // TODO: FIX , why isn't it dispalying upon clicking save?
   function displayTasks(menuOption) {
     const taskContainer = document.querySelector('#taskContainer');
 
