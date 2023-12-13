@@ -163,6 +163,7 @@ export function displayController() {
     checkbox.name = 'task-checkbox';
     checkbox.setAttribute('class', 'task-checkbox');
 
+    // TODO: figure out why checkbox is not working
     checkbox.addEventListener('click', (e) => {
       checkbox.checked = true;
     });
@@ -252,9 +253,30 @@ export function displayController() {
 
     saveTaskEdit.addEventListener('click', (e) => {
       e.preventDefault();
-      // TODO: edit the values in the projects array
-      // TODO: re-render everything in the dom
-      // TODO: create function perhaps?
+      projects.forEach((list) => {
+        // find list we're in
+        if (currentProjectList.textContent === list.title) {
+          // if list found then we look for that task
+          list.todos.forEach((task, index) => {
+            if (currentTaskTitle.textContent === task.title) {
+              // delete that task
+              list.todos.splice(index, 1);
+              // create new task with updated values
+              createTodoItem(
+                editTaskTitle.value,
+                editTaskDescription.value,
+                editDueDue.value,
+                editProjectList.value,
+                editPriority.value
+              );
+            }
+          });
+        }
+      });
+      // render tasks again to reflect changes
+      const projectHeader = document.querySelector('#project-name');
+      displayTasks(projectHeader.textContent);
+      // console.log(projects); // for debugging purposes
       editTaskDialog.close();
     });
 
