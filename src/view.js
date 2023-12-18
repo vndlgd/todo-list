@@ -159,14 +159,10 @@ export function displayController() {
     task.setAttribute('class', 'todo');
 
     const checkbox = document.createElement('input');
-    checkbox.setAttribute('type', 'checkbox');
+    checkbox.type = 'checkbox';
     checkbox.name = 'task-checkbox';
     checkbox.setAttribute('class', 'task-checkbox');
-
-    // TODO: figure out why checkbox is not working
-    checkbox.addEventListener('click', (e) => {
-      checkbox.checked = true;
-    });
+    // use checkbox.checked for values of true and false
 
     const currentTaskTitle = document.createElement('span');
     currentTaskTitle.textContent = taskTitle;
@@ -209,10 +205,6 @@ export function displayController() {
     buttonsContainer.appendChild(editBtn);
     buttonsContainer.appendChild(deleteBtn);
     todoExpanded.appendChild(buttonsContainer);
-
-    // Functionality for editing task
-    // TODO: consider splitting this into smaller functions
-    // it all looks too jumbled up
 
     const editTaskDialog = document.querySelector('#edit-task-dialog');
     const editTaskTitle = editTaskDialog.querySelector('#edit-item-title');
@@ -294,9 +286,19 @@ export function displayController() {
       taskContainer.removeChild(task);
     });
 
+    // Prevent checkbox click from triggering the expand/collapse
+    checkbox.addEventListener('click', (e) => {
+      e.stopPropagation(); // stop the click event from propagating to the parent
+    });
+
+    // TODO: this is causing check to not work
     // expand and hide task description and buttons on click
     task.addEventListener('click', (e) => {
       e.preventDefault();
+      if (e.target.type === 'checkbox') {
+        if (e.target.checked) {
+        }
+      }
       if (task.contains(todoExpanded)) {
         task.removeChild(task.lastChild);
       } else {
@@ -311,6 +313,18 @@ export function displayController() {
     task.appendChild(currentPriority);
 
     taskContainer.appendChild(task);
+  }
+
+  function expandTask() {
+    const todoWithoutCheckbox = document.querySelectorAll(
+      'div.todo:not(.task-checkbox)'
+    );
+
+    todoWithoutCheckbox.forEach((task) => {
+      task.addEventListener('click', (e) => {
+        console.log(task);
+      });
+    });
   }
 
   function displayTasks(menuOption) {
