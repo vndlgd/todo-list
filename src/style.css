@@ -407,3 +407,8 @@ button {
   justify-content: center;
   gap: 10px;
 }
+
+.completed {
+  color: rgb(0 0 0 / 0.5);
+  text-decoration: line-through;
+}

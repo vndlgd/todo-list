@@ -151,7 +151,8 @@ export function displayController() {
     taskDescription,
     dueDate,
     projectList,
-    priority
+    priority,
+    finished
   ) {
     const todoItems = document.querySelector('#todo-items');
     const taskContainer = document.querySelector('#taskContainer');
@@ -259,7 +260,8 @@ export function displayController() {
                 editTaskDescription.value,
                 editDueDue.value,
                 editProjectList.value,
-                editPriority.value
+                editPriority.value,
+                checkbox.checked
               );
             }
           });
@@ -289,22 +291,71 @@ export function displayController() {
     // Prevent checkbox click from triggering the expand/collapse
     checkbox.addEventListener('click', (e) => {
       e.stopPropagation(); // stop the click event from propagating to the parent
+      // or else it will reset every time you create a new task
+      if (checkbox.checked) {
+        projects.forEach((list) => {
+          list.todos.forEach((task) => {
+            if (task.title === currentTaskTitle.textContent) {
+              task.completed = true;
+              currentTaskTitle.classList.add('completed');
+              currentTaskDescription.classList.add('completed');
+              currentDueDate.classList.add('completed');
+              currentProjectList.classList.add('completed');
+            }
+          });
+        });
+      } else {
+        projects.forEach((list) => {
+          list.todos.forEach((task) => {
+            if (task.title === currentTaskTitle.textContent) {
+              task.completed = false;
+              currentTaskTitle.classList.remove('completed');
+              currentTaskDescription.classList.remove('completed');
+              currentDueDate.classList.remove('completed');
+              currentProjectList.classList.remove('completed');
+            }
+          });
+        });
+      }
+      console.log(projects);
+      // if ()
+      //   // TODO: leave checbox checked
+      // checkbox.checked = true;
+      //   currentTaskTitle.classList.add('completed');
+      //   currentTaskDescription.classList.add('completed');
+      //   currentDueDate.classList.add('completed');
+      //   currentProjectList.classList.add('completed');
+      // } else {
+      //   currentTaskTitle.classList.remove('completed');
+      //   currentTaskDescription.classList.remove('completed');
+      //   currentDueDate.classList.remove('completed');
+      //   currentProjectList.classList.remove('completed');
+      // }
     });
 
-    // TODO: this is causing check to not work
     // expand and hide task description and buttons on click
     task.addEventListener('click', (e) => {
       e.preventDefault();
-      if (e.target.type === 'checkbox') {
-        if (e.target.checked) {
-        }
-      }
       if (task.contains(todoExpanded)) {
         task.removeChild(task.lastChild);
       } else {
         task.appendChild(todoExpanded);
       }
     });
+
+    if (finished) {
+      checkbox.checked = true;
+      currentTaskTitle.classList.add('completed');
+      currentTaskDescription.classList.add('completed');
+      currentDueDate.classList.add('completed');
+      currentProjectList.classList.add('completed');
+    } else {
+      checkbox.checked = false;
+      currentTaskTitle.classList.remove('completed');
+      currentTaskDescription.classList.remove('completed');
+      currentDueDate.classList.remove('completed');
+      currentProjectList.classList.remove('completed');
+    }
 
     task.appendChild(checkbox);
     task.appendChild(currentTaskTitle);
@@ -313,18 +364,6 @@ export function displayController() {
     task.appendChild(currentPriority);
 
     taskContainer.appendChild(task);
-  }
-
-  function expandTask() {
-    const todoWithoutCheckbox = document.querySelectorAll(
-      'div.todo:not(.task-checkbox)'
-    );
-
-    todoWithoutCheckbox.forEach((task) => {
-      task.addEventListener('click', (e) => {
-        console.log(task);
-      });
-    });
   }
 
   function displayTasks(menuOption) {
@@ -345,7 +384,8 @@ export function displayController() {
             todo.description,
             todo.dueDate,
             todo.todoList,
-            todo.priority
+            todo.priority,
+            todo.completed
           );
         } else if (menuOption === 'Today') {
           if (todo.dueDate === today) {
@@ -354,7 +394,8 @@ export function displayController() {
               todo.description,
               todo.dueDate,
               todo.todoList,
-              todo.priority
+              todo.priority,
+              todo.completed
             );
           }
           // find way to find within a range
@@ -365,7 +406,8 @@ export function displayController() {
               todo.description,
               todo.dueDate,
               todo.todoList,
-              todo.priority
+              todo.priority,
+              todo.completed
             );
           }
         } else {
@@ -375,7 +417,8 @@ export function displayController() {
               todo.description,
               todo.dueDate,
               todo.todoList,
-              todo.priority
+              todo.priority,
+              todo.completed
             );
           }
         }
@@ -440,6 +483,10 @@ export function displayController() {
       });
     });
   };
+
+  function crossOutCompletedTask() {
+    const todoTask = document.querySelectorAll('');
+  }
 
   newProjectModal();
   newTaskModal();
