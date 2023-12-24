@@ -1,6 +1,12 @@
 import { createTodoList } from './todo-list';
 import { createTodoItem } from './todo-item';
-import { projects, deleteTodoList, taskNameExists } from './todo-app';
+import {
+  projects,
+  deleteTodoList,
+  taskNameExists,
+  saveToLocalStorage,
+  removeListFromLocalStorage,
+} from './todo-app';
 import { format, addWeeks } from 'date-fns';
 import Icon from './icon.png';
 
@@ -70,6 +76,7 @@ export function displayController() {
           projectList.value,
           priority.value
         );
+        saveToLocalStorage(projectList.value);
         // display tasks when we create new task and haven't clicked any menu items
         console.log(currentProjectHeader.firstChild.textContent);
         displayTasks(currentProjectHeader.firstChild.textContent);
@@ -106,6 +113,7 @@ export function displayController() {
         alert('That title already exists.');
       } else {
         createTodoList(inputEl.value);
+        saveToLocalStorage(inputEl.value);
         displaySubmenu();
         updateProjectHeader();
         console.log(projects);
@@ -250,10 +258,13 @@ export function displayController() {
         // find list we're in
         if (currentProjectList.textContent === list.title) {
           // if list found then we look for that task
+          let storedTasks = JSON.parse(localStorage.getItem(list.title));
           list.todos.forEach((task, index) => {
+            // TODO: this condition should only occur if editProjectList is different than list.title
             if (currentTaskTitle.textContent === task.title) {
               // delete that task
               list.todos.splice(index, 1);
+              storedTasks.splice(index, 1);
               // create new task with updated values
               createTodoItem(
                 editTaskTitle.value,
@@ -263,23 +274,34 @@ export function displayController() {
                 editPriority.value,
                 checkbox.checked
               );
+              localStorage.setItem(list.title, JSON.stringify(storedTasks));
+              saveToLocalStorage(editProjectList.value);
             }
           });
         }
       });
       // render tasks again to reflect changes
       const projectHeader = document.querySelector('#project-name');
-      displayTasks(projectHeader.textContent);
+      displayTasks(projectHeader.firstChild.textContent);
       // console.log(projects); // for debugging purposes
       editTaskDialog.close();
     });
 
+    // delete task button
     deleteBtn.addEventListener('click', (e) => {
       e.preventDefault();
       projects.forEach((list) => {
         if (list.title === projectList) {
+          let storedTasks = JSON.parse(localStorage.getItem(list.title));
           list.todos.forEach((todo, index) => {
-            list.todos.splice(index, 1);
+            console.log(currentTaskTitle.textContent);
+            if (currentTaskTitle.textContent === todo.title) {
+              list.todos.splice(index, 1);
+              // remove item selected
+              storedTasks.splice(index, 1);
+            }
+            // after removing item, put object into storage
+            localStorage.setItem(list.title, JSON.stringify(storedTasks));
             console.log('Deleted task!');
             console.log(projects); // for debugging
           });
@@ -297,6 +319,7 @@ export function displayController() {
           list.todos.forEach((task) => {
             if (task.title === currentTaskTitle.textContent) {
               task.completed = true;
+              saveToLocalStorage(list.title);
               currentTaskTitle.classList.add('completed');
               currentTaskDescription.classList.add('completed');
               currentDueDate.classList.add('completed');
@@ -309,6 +332,7 @@ export function displayController() {
           list.todos.forEach((task) => {
             if (task.title === currentTaskTitle.textContent) {
               task.completed = false;
+              saveToLocalStorage(list.title);
               currentTaskTitle.classList.remove('completed');
               currentTaskDescription.classList.remove('completed');
               currentDueDate.classList.remove('completed');
@@ -318,19 +342,6 @@ export function displayController() {
         });
       }
       console.log(projects);
-      // if ()
-      //   // TODO: leave checbox checked
-      // checkbox.checked = true;
-      //   currentTaskTitle.classList.add('completed');
-      //   currentTaskDescription.classList.add('completed');
-      //   currentDueDate.classList.add('completed');
-      //   currentProjectList.classList.add('completed');
-      // } else {
-      //   currentTaskTitle.classList.remove('completed');
-      //   currentTaskDescription.classList.remove('completed');
-      //   currentDueDate.classList.remove('completed');
-      //   currentProjectList.classList.remove('completed');
-      // }
     });
 
     // expand and hide task description and buttons on click
@@ -474,6 +485,9 @@ export function displayController() {
           console.log('Deleting:', div.id);
           // if i make 3 lists, and delete the 3rd one, then the 2nd, the 2nd wont delete
           // in the UI
+          removeListFromLocalStorage(
+            currentProjectHeader.firstChild.textContent
+          );
           deleteTodoList(currentProjectHeader.firstChild.textContent);
           displaySubmenu();
           currentProjectHeader.textContent = 'All Tasks';
@@ -492,6 +506,19 @@ export function displayController() {
   newTaskModal();
   displaySubmenu();
   updateProjectHeader();
+
+  // TODO: order of localStorage get scrambled
+  window.addEventListener('load', (e) => {
+    for (let i = 0; i < localStorage.length; i++) {
+      // console.log(localStorage.key(i));
+      // createTodoList(localStorage.key(i));
+      // displaySubmenu();
+    }
+    // for (let i = 0; i < localStorage.length; i++) {
+    //   console.log(JSON.parse(localStorage.getItem(localStorage.key(i))));
+    // }
+    // displayTasks('All Tasks');
+  });
 
   return {};
 }

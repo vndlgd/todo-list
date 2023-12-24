@@ -50,39 +50,52 @@ export function taskNameExists(taskName) {
   return exists;
 }
 
+// TODO: might only need two functions if project array value already contains todos as part of object
+
+export function saveToLocalStorage(project) {
+  projects.forEach((list) => {
+    if (list.title === project) {
+      localStorage.setItem(list.title, JSON.stringify(list.todos));
+    }
+  });
+}
+
+export function removeListFromLocalStorage(project) {
+  projects.forEach((list) => {
+    if (list.title === project) {
+      localStorage.removeItem(list.title);
+    }
+  });
+}
+
+// export function removeTaskFromLocalStorage(task) {
+//   for (let i = 0; i < localStorage.length; i++) {
+//     if (localStorage.getItem)
+//   }
+// }
+
+// export function saveTodoToLocalStorage(todo) {
+//   projects.forEach((list) => {
+//     list.todos.forEach((task) => {
+//       if (task.title === todo) {
+//         localStorage.setItem('taskTitle', task.title);
+//         localStorage.setItem('taskdescription', task.description);
+//         localStorage.setItem('taskDueDate', task.dueDate);
+//         localStorage.setItem('taskPriority', task.priority);
+//         localStorage.setItem('taskTodoList', task.todoList);
+//         localStorage.setItem('taskCompletion', task.completed);
+//       }
+//     });
+//   });
+// }
+
+export function loadProjectsFromLocalStorage() {}
+
+export function loadTodosFromLocalStorage() {}
+
 // default list
 // export to enter items into this list when no list is provided
 export const general = createTodoList('General');
-
-// test
-// const shoppingList = createTodoList('ShoppingList');
-// const christmasList = createTodoList('Christmas Wish List');
-
-// const item1 = createTodoItem(
-//   'Buy Milk',
-//   'Get Soy or Oatmilk',
-//   'April 13 2024',
-//   shoppingList,
-//   PRIORITIES.LOW
-// );
-
-// const item2 = createTodoItem(
-//   'Buy Shoes',
-//   'Store closes at 10 PM',
-//   'April 13 2024',
-//   general,
-//   PRIORITIES.MEDIUM,
-//   false
-// );
-
-// const item3 = createTodoItem(
-//   'Buy a new hat',
-//   'Store closed on weekends',
-//   'April 13 2024',
-//   general,
-//   PRIORITIES.HIGH,
-//   true
-// );
 
 printListOfProjects();
 const display = displayController();
