@@ -36,7 +36,7 @@ export function displayController() {
     const projectList = newTaskDialog.querySelector('select');
     const priority = newTaskDialog.querySelector('#priority-level');
 
-    showButton.addEventListener('click', () => {
+    showButton.onclick = (e) => {
       while (projectList.hasChildNodes()) {
         // to avoid duplicate values and errors
         console.log(projectList.lastChild);
@@ -51,7 +51,7 @@ export function displayController() {
       });
       dueDate.value = today;
       newTaskDialog.showModal();
-    });
+    };
 
     newTaskDialog.addEventListener('close', (e) => {
       taskTitle.value = '';
@@ -61,7 +61,7 @@ export function displayController() {
       priority.value = defaultPriority.value;
     });
 
-    saveBtn.addEventListener('click', (e) => {
+    saveBtn.onclick = (e) => {
       e.preventDefault();
       console.log(taskTitle.value);
       // const titleArray = projects.map(({ title }) => title);
@@ -86,7 +86,7 @@ export function displayController() {
         console.log(' ------ '); // for clarity in console debugging
         newTaskDialog.close();
       }
-    });
+    };
   };
 
   // open and close project modal
@@ -97,16 +97,16 @@ export function displayController() {
     const inputEl = newProjectDialog.querySelector('input');
 
     // Show dialog button opens <dialog> modally
-    showButton.addEventListener('click', () => {
+    showButton.onclick = (e) => {
       newProjectDialog.showModal();
-    });
+    };
 
     newProjectDialog.addEventListener('close', (e) => {
       inputEl.value = '';
     });
 
     // add projects to submenu
-    saveBtn.addEventListener('click', (e) => {
+    saveBtn.onclick = (e) => {
       e.preventDefault();
       const titleArray = projects.map(({ title }) => title);
       if (inputEl.value === '') {
@@ -122,7 +122,7 @@ export function displayController() {
         console.log(' ------ '); // for clarity in console debugging
         newProjectDialog.close();
       }
-    });
+    };
 
     return {};
   };
@@ -229,7 +229,7 @@ export function displayController() {
 
     const saveTaskEdit = editTaskDialog.querySelector('.saveBtn');
 
-    editBtn.addEventListener('click', (e) => {
+    editBtn.onclick = (e) => {
       e.preventDefault();
       while (editProjectList.hasChildNodes()) {
         // to avoid duplicate values and errors
@@ -249,23 +249,47 @@ export function displayController() {
       editPriority.value = priority;
       editTaskDialog.showModal();
       // call functions that edit these parameters in a pop up form
-    });
+    };
 
     // display current values
     editTaskDialog.addEventListener('close', (e) => {});
 
     // TODO: fix this to make edit work
-    saveTaskEdit.addEventListener('click', (e) => {
+    saveTaskEdit.onclick = (e) => {
       e.preventDefault();
+      console.log(e.target); // TODO: memory leak <<<
+      projects.forEach((list) => {
+        // find list we're in
+        if (currentProjectList.textContent === list.title) {
+          // if list found then we look for that task
+          list.todos.forEach((task, index) => {
+            // TODO: this condition should only occur if editProjectList is different than list.title
+            if (currentTaskTitle.textContent === task.title) {
+              // delete that task
+              list.todos.splice(index, 1);
+              // create new task with updated values
+              createTodoItem(
+                editTaskTitle.value,
+                editTaskDescription.value,
+                editDueDue.value,
+                editProjectList.value,
+                editPriority.value,
+                checkbox.checked
+              );
+              saveTaskToLocalStorage(editProjectList.value);
+            }
+          });
+        }
+      });
       // render tasks again to reflect changes
       const projectHeader = document.querySelector('#project-name');
       displayTasks(projectHeader.firstChild.textContent);
       // console.log(projects); // for debugging purposes
       editTaskDialog.close();
-    });
+    };
 
     // delete task button
-    deleteBtn.addEventListener('click', (e) => {
+    deleteBtn.onclick = (e) => {
       e.preventDefault();
       projects.forEach((list) => {
         if (list.title === projectList) {
@@ -284,10 +308,10 @@ export function displayController() {
         }
       });
       taskContainer.removeChild(task);
-    });
+    };
 
     // Prevent checkbox click from triggering the expand/collapse
-    checkbox.addEventListener('click', (e) => {
+    checkbox.onclick = (e) => {
       e.stopPropagation(); // stop the click event from propagating to the parent
       // or else it will reset every time you create a new task
       if (checkbox.checked) {
@@ -318,17 +342,17 @@ export function displayController() {
         });
       }
       console.log(projects);
-    });
+    };
 
     // expand and hide task description and buttons on click
-    task.addEventListener('click', (e) => {
+    task.onclick = (e) => {
       e.preventDefault();
       if (task.contains(todoExpanded)) {
         task.removeChild(task.lastChild);
       } else {
         task.appendChild(todoExpanded);
       }
-    });
+    };
 
     if (finished) {
       checkbox.checked = true;
@@ -428,7 +452,7 @@ export function displayController() {
 
     // add delete button to each new list we create
     buttons.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
+      btn.onclick = (e) => {
         // change project header to whatever list we click
         currentProjectHeader.textContent = e.target.value;
         console.log(btn.value);
@@ -444,19 +468,19 @@ export function displayController() {
           currentProjectHeader.appendChild(showButton);
         }
         displayTasks(btn.value); // display tasks of list we choose
-      });
+      };
     });
 
     // show modal to delete list
-    showButton.addEventListener('click', (e) => {
+    showButton.onclick = (e) => {
       e.preventDefault();
       deleteListDialog.showModal();
-    });
+    };
 
     console.log(buttonDivs);
     // delete list in UI and in projects array
     buttonDivs.forEach((div) => {
-      deleteBtn.addEventListener('click', (e) => {
+      deleteBtn.onclick = (e) => {
         if (currentProjectHeader.firstChild.textContent === div.id) {
           console.log('Deleting:', div.id);
           // if i make 3 lists, and delete the 3rd one, then the 2nd, the 2nd wont delete
@@ -470,7 +494,7 @@ export function displayController() {
           displayTasks('All Tasks');
           deleteListDialog.close();
         }
-      });
+      };
     });
   };
 
