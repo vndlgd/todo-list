@@ -52,42 +52,42 @@ export function taskNameExists(taskName) {
 
 // TODO: might only need two functions if project array value already contains todos as part of object
 
-export function saveToLocalStorage(project) {
+export function saveProjectToLocalStorage() {
+  const storageArray = [];
+  projects.forEach((list) => {
+    storageArray.push(list.title);
+  });
+  localStorage.setItem('projects', JSON.stringify(storageArray));
+}
+
+export function removeProjectFromLocalStorage(project) {
+  const storageArray = JSON.parse(localStorage.getItem('projects'));
+  storageArray.forEach((list, index) => {
+    if (list === project) {
+      storageArray.splice(index, 1);
+    }
+  });
+  localStorage.setItem('projects', JSON.stringify(storageArray));
+}
+
+export function saveTaskToLocalStorage(project) {
   projects.forEach((list) => {
     if (list.title === project) {
-      localStorage.setItem(list.title, JSON.stringify(list.todos));
+      localStorage.setItem('todos', JSON.stringify(list.todos));
     }
   });
 }
 
-export function removeListFromLocalStorage(project) {
-  projects.forEach((list) => {
-    if (list.title === project) {
-      localStorage.removeItem(list.title);
+export function removeTaskFromLocalStorage(task) {
+  const taskArray = JSON.parse(localStorage.getItem('todos'));
+  console.log(taskArray);
+  for (let i = 0; i < taskArray.length; i++) {
+    if (taskArray[i].title === task) {
+      taskArray.splice(i, 1);
     }
-  });
+  }
+  localStorage.setItem('todos', JSON.stringify(taskArray));
 }
-
-// export function removeTaskFromLocalStorage(task) {
-//   for (let i = 0; i < localStorage.length; i++) {
-//     if (localStorage.getItem)
-//   }
-// }
-
-// export function saveTodoToLocalStorage(todo) {
-//   projects.forEach((list) => {
-//     list.todos.forEach((task) => {
-//       if (task.title === todo) {
-//         localStorage.setItem('taskTitle', task.title);
-//         localStorage.setItem('taskdescription', task.description);
-//         localStorage.setItem('taskDueDate', task.dueDate);
-//         localStorage.setItem('taskPriority', task.priority);
-//         localStorage.setItem('taskTodoList', task.todoList);
-//         localStorage.setItem('taskCompletion', task.completed);
-//       }
-//     });
-//   });
-// }
 
 export function loadProjectsFromLocalStorage() {}
 
