@@ -78,7 +78,7 @@ export function displayController() {
           projectList.value,
           priority.value
         );
-        saveTaskToLocalStorage(projectList.value);
+        saveTaskToLocalStorage();
         // display tasks when we create new task and haven't clicked any menu items
         displayTasks(currentProjectHeader.firstChild.textContent);
         // updateProjectHeader();
@@ -269,7 +269,7 @@ export function displayController() {
           taskToEdit.completed = checkbox.checked;
         }
       }
-      saveTaskToLocalStorage(editProjectList.value);
+      saveTaskToLocalStorage();
       // render tasks again to reflect changes
       const projectHeader = document.querySelector('#project-name');
       displayTasks(projectHeader.firstChild.textContent);
@@ -303,7 +303,7 @@ export function displayController() {
           list.todos.forEach((task) => {
             if (task.title === currentTaskTitle.textContent) {
               task.completed = true;
-              saveTaskToLocalStorage(list.title);
+              saveTaskToLocalStorage();
               currentTaskTitle.classList.add('completed');
               currentTaskDescription.classList.add('completed');
               currentDueDate.classList.add('completed');
@@ -316,7 +316,7 @@ export function displayController() {
           list.todos.forEach((task) => {
             if (task.title === currentTaskTitle.textContent) {
               task.completed = false;
-              saveTaskToLocalStorage(list.title);
+              saveTaskToLocalStorage();
               currentTaskTitle.classList.remove('completed');
               currentTaskDescription.classList.remove('completed');
               currentDueDate.classList.remove('completed');

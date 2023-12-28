@@ -61,15 +61,22 @@ export function removeProjectFromLocalStorage(project) {
       storageArray.splice(index, 1);
     }
   });
+  const taskArray = JSON.parse(localStorage.getItem('todos'));
+  const filteredTaskArray = taskArray.filter(
+    (task) => task.todoList !== project
+  );
   localStorage.setItem('projects', JSON.stringify(storageArray));
+  localStorage.setItem('todos', JSON.stringify(filteredTaskArray));
 }
 
-export function saveTaskToLocalStorage(project) {
+export function saveTaskToLocalStorage() {
+  const taskArray = [];
   projects.forEach((list) => {
-    if (list.title === project) {
-      localStorage.setItem('todos', JSON.stringify(list.todos));
-    }
+    list.todos.forEach((task) => {
+      taskArray.push(task);
+    });
   });
+  localStorage.setItem('todos', JSON.stringify(taskArray));
 }
 
 export function removeTaskFromLocalStorage(task) {
