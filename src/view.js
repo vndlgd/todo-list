@@ -18,7 +18,8 @@ const today = format(new Date(), 'yyyy-MM-dd');
 const currentProjectHeader = document.querySelector('#project-name');
 const initialValue = document.getElementById('initial-value');
 
-let globalEditBtn;
+// TODO: refactor, avoid global variables to prevent unintended consequences
+let globalEditBtn; // stores the actual value of currentTask globally
 
 // Initialize to 'All Tasks' on refresh
 currentProjectHeader.textContent = initialValue.value;
