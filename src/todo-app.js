@@ -26,16 +26,10 @@ function printListOfProjects() {
 
 export function deleteTodoList(listToDelete) {
   for (let i = 0; i < projects.length; i++) {
-    console.log(listToDelete);
-    console.log(projects[i].title);
-    console.log(listToDelete === projects[i].title);
     if (projects[i].title === listToDelete) {
       projects.splice(i, 1);
-      console.log('we should only be calling once');
-      console.log('deleted!');
     }
   }
-  console.log(projects); // for debugging
 }
 
 export function taskNameExists(taskName) {
@@ -80,7 +74,6 @@ export function saveTaskToLocalStorage(project) {
 
 export function removeTaskFromLocalStorage(task) {
   const taskArray = JSON.parse(localStorage.getItem('todos'));
-  console.log(taskArray);
   for (let i = 0; i < taskArray.length; i++) {
     if (taskArray[i].title === task) {
       taskArray.splice(i, 1);
@@ -97,5 +90,4 @@ export function loadTodosFromLocalStorage() {}
 // export to enter items into this list when no list is provided
 export const general = createTodoList('General');
 
-printListOfProjects();
 const display = displayController();
