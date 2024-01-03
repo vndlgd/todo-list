@@ -1,14 +1,12 @@
-import { createTodoList } from './todo-list';
-import { createTodoItem } from './todo-item';
+import { createProject } from './create-project';
+import { createTodo } from './create-todo';
+import { projectsArray, deleteTodoList, todoNameExists } from './index';
 import {
-  projects,
-  deleteTodoList,
-  taskNameExists,
-  saveTaskToLocalStorage,
-  removeProjectFromLocalStorage,
   saveProjectToLocalStorage,
+  removeProjectFromLocalStorage,
+  saveTaskToLocalStorage,
   removeTaskFromLocalStorage,
-} from './todo-app';
+} from './localStorage';
 import { format, addWeeks } from 'date-fns';
 import Icon from './icon.png';
 
@@ -18,16 +16,13 @@ const today = format(new Date(), 'yyyy-MM-dd');
 const currentProjectHeader = document.querySelector('#project-name');
 const initialValue = document.getElementById('initial-value');
 
-// TODO: refactor, avoid global variables to prevent unintended consequences
-let globalEditBtn; // stores the actual value of currentTask globally
-
 // Initialize to 'All Tasks' on refresh
 currentProjectHeader.textContent = initialValue.value;
 
 // DisplayController factory function here
 export function displayController() {
   // open and close task modal
-  const newTaskModal = function () {
+  function newTaskModal() {
     const showButton = document.getElementById('add-task-button');
     const newTaskDialog = document.getElementById('new-task-dialog');
     const saveBtn = newTaskDialog.querySelector('.saveBtn');
@@ -39,40 +34,45 @@ export function displayController() {
     const projectList = newTaskDialog.querySelector('select');
     const priority = newTaskDialog.querySelector('#priority-level');
 
-    showButton.addEventListener('click', (e) => {
+    function openTaskDialog() {
       while (projectList.hasChildNodes()) {
         // to avoid duplicate values and errors
         projectList.removeChild(projectList.lastChild); // clear sidebar added projects
       }
       // dynamically create a drop-down list with list options
-      projects.forEach((list) => {
+      projectsArray.forEach((list) => {
         const option = document.createElement('option');
         option.value = list.title;
         option.text = list.title;
+        // automatically choose list we're in depending on page selected
+        if (option.value === currentProjectHeader.firstChild.textContent) {
+          option.selected = true;
+        }
         projectList.appendChild(option);
       });
+
+      // loop through all projects
+      // if currentProjectHeader.textContent is in the list of projects
+      // set projectList.value = to it
       dueDate.value = today;
       newTaskDialog.showModal();
-    });
+    }
 
-    newTaskDialog.addEventListener('close', (e) => {
+    function closeTaskDialog() {
       taskTitle.value = '';
       taskDescription.value = '';
       // reset priority to low each time
-      const defaultPriority = document.querySelector('.default-priority');
-      priority.value = defaultPriority.value;
-    });
+    }
 
-    saveBtn.addEventListener('click', (e) => {
-      e.preventDefault();
+    function saveTask() {
       // const titleArray = projects.map(({ title }) => title);
       if (taskTitle.value === '') {
         alert('Please add title.');
         // go through ALL todo titles in every list, if duplicate is found, alert user
-      } else if (taskNameExists(taskTitle.value)) {
+      } else if (todoNameExists(taskTitle.value)) {
         alert('That title already exists.');
       } else {
-        createTodoItem(
+        createTodo(
           taskTitle.value,
           taskDescription.value,
           dueDate.value,
@@ -81,77 +81,216 @@ export function displayController() {
         );
         saveTaskToLocalStorage();
         // display tasks when we create new task and haven't clicked any menu items
-        displayTasks(currentProjectHeader.firstChild.textContent);
         // updateProjectHeader();
+        renderPage(projectList.value);
         newTaskDialog.close();
       }
-    });
-  };
+    }
+
+    return { openTaskDialog, closeTaskDialog, saveTask };
+  }
 
   // open and close project modal
-  const newProjectModal = function () {
+  function newProjectModal() {
     const showButton = document.getElementById('add-project-button');
     const newProjectDialog = document.getElementById('new-project-dialog');
     const saveBtn = newProjectDialog.querySelector('.saveBtn');
     const inputEl = newProjectDialog.querySelector('input');
 
     // Show dialog button opens <dialog> modally
-    showButton.addEventListener('click', (e) => {
+    function openProjectModal() {
       newProjectDialog.showModal();
-    });
+    }
 
-    newProjectDialog.addEventListener('close', (e) => {
+    function clearInputField() {
       inputEl.value = '';
-    });
+    }
 
     // add projects to submenu
-    saveBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      const titleArray = projects.map(({ title }) => title);
+    // TODO: find way to not have modal close if invalid input, remain open
+    function saveProject() {
+      const titleArray = projectsArray.map(({ title }) => title);
       if (inputEl.value === '') {
         alert('Please add title.');
       } else if (titleArray.includes(inputEl.value)) {
         alert('That title already exists.');
       } else {
-        createTodoList(inputEl.value);
+        createProject(inputEl.value);
         saveProjectToLocalStorage();
-        displaySubmenu();
-        updateProjectHeader();
+        renderSubmenu();
+        // updateProjectHeader();
+        console.log(projectsArray);
+        console.log(localStorage);
         newProjectDialog.close();
       }
-    });
+    }
+    return { openProjectModal, clearInputField, saveProject };
+  }
 
-    return {};
-  };
+  function deleteProjectModal() {
+    const deleteListDialog = document.getElementById('delete-list-dialog');
 
-  function displaySubmenu() {
-    const submenu = document.querySelectorAll('.submenu');
-    submenu.forEach((item) => {
-      sidebar.removeChild(item);
-    });
-    projects.forEach((project) => {
-      const container = document.createElement('div');
-      const newProject = document.createElement('button');
-      const image = document.createElement('img');
-      image.src = Icon;
-      container.setAttribute('class', 'submenu');
-      container.setAttribute('id', project.title);
-      newProject.setAttribute('class', 'btn');
-      newProject.setAttribute('value', project.title);
-      newProject.textContent = project.title;
+    // show modal to delete list
+    function openDeleteProjectModal() {
+      deleteListDialog.showModal();
+    }
 
-      if (project.title !== 'General') {
-        newProject.classList.add('new');
+    // delete list from projects array
+    function deleteProject(project) {
+      projectsArray.forEach((list) => {
+        if (list.title === project) {
+          removeProjectFromLocalStorage(project);
+          deleteTodoList(project);
+          renderSubmenu();
+          currentProjectHeader.textContent = 'All Tasks';
+          renderPage('All Tasks');
+          deleteListDialog.close();
+        }
+      });
+    }
+
+    return { openDeleteProjectModal, deleteProject };
+  }
+
+  function expandTaskDiv(task, taskTitle, taskProject) {
+    // create clickable div to expand and show description and buttons
+    const todoExpanded = document.createElement('div');
+    todoExpanded.setAttribute('class', 'todo-expanded');
+
+    const descriptionContainer = document.createElement('div');
+    descriptionContainer.setAttribute('class', 'description-container');
+    // loop throught taskProject and find taskTitle and get description
+    projectsArray.forEach((list) => {
+      if (list.title === taskProject) {
+        list.todos.forEach((task) => {
+          if (task.title === taskTitle) {
+            descriptionContainer.textContent = task.description;
+          }
+        });
       }
+    });
 
-      container.appendChild(image);
-      container.appendChild(newProject);
-      sidebar.appendChild(container);
-      updateProjectHeader();
+    todoExpanded.appendChild(descriptionContainer);
+
+    const buttonsContainer = document.createElement('div');
+    buttonsContainer.setAttribute('class', 'buttons-container');
+    const editBtn = document.createElement('button');
+    const deleteBtn = document.createElement('button');
+    editBtn.textContent = 'Edit';
+    deleteBtn.textContent = 'Delete';
+    editBtn.setAttribute('class', 'editBtn');
+    deleteBtn.setAttribute('class', 'deleteBtn');
+    buttonsContainer.appendChild(editBtn);
+    buttonsContainer.appendChild(deleteBtn);
+    todoExpanded.appendChild(buttonsContainer);
+
+    if (task.lastChild.classList.contains('todo-expanded')) {
+      task.removeChild(task.lastChild);
+    } else {
+      task.appendChild(todoExpanded);
+    }
+  }
+
+  function editTaskModal() {
+    const editTaskDialog = document.querySelector('#edit-task-dialog');
+    const editTaskTitle = editTaskDialog.querySelector('#edit-item-title');
+    const editTaskDescription = editTaskDialog.querySelector(
+      '#edit-item-description'
+    );
+    let editDueDue = editTaskDialog.querySelector('#edit-due-date');
+    let editProjectList = editTaskDialog.querySelector('select');
+    let editPriority = editTaskDialog.querySelector('#edit-priority-level');
+
+    function openEditTaskModal(taskTitle, taskProject) {
+      while (editProjectList.hasChildNodes()) {
+        // to avoid duplicate values and errors
+        editProjectList.removeChild(editProjectList.lastChild);
+      }
+      // dynamically create a drop-down list with list options
+      projectsArray.forEach((list) => {
+        if (list.title === taskProject) {
+          list.todos.forEach((task) => {
+            if (task.title === taskTitle) {
+              editTaskTitle.value = task.title;
+              editTaskDescription.value = task.description;
+              editDueDue.value = task.dueDate;
+              editProjectList.value = task.todoList;
+              editPriority.value = task.priority;
+            }
+          });
+        }
+      });
+
+      // create select options
+      projectsArray.forEach((list) => {
+        const option = document.createElement('option');
+        option.value = list.title;
+        option.text = list.title;
+        // select list it was already in
+        if (list.title === taskProject) {
+          option.selected = true;
+        }
+        editProjectList.appendChild(option);
+      });
+      editTaskDialog.showModal();
+    }
+
+    function saveTaskEdit(taskTitle, taskProject) {
+      projectsArray.forEach((list) => {
+        // find task by searching all lists first
+        if (list.title === taskProject) {
+          // if list found
+          list.todos.forEach((task, index) => {
+            // if task found
+            if (task.title === taskTitle) {
+              // check if we're changing lists or staying in same list
+              if (task.todoList === editProjectList.value) {
+                task.title = editTaskTitle.value;
+                task.description = editTaskDescription.value;
+                task.dueDate = editDueDue.value;
+                task.priority = editPriority.value;
+              } else {
+                // delete task in old list
+                list.todos.splice(index, 1);
+                // add task to new list
+                createTodo(
+                  editTaskTitle.value,
+                  editTaskDescription.value,
+                  editDueDue.value,
+                  editProjectList.value,
+                  editPriority.value
+                );
+              }
+            }
+          });
+        }
+      });
+      saveTaskToLocalStorage();
+      console.log(projectsArray);
+      // render tasks again to reflect changes
+      editTaskDialog.close();
+    }
+
+    return { openEditTaskModal, saveTaskEdit };
+  }
+
+  function deleteTask(taskTitle, projectList) {
+    // delete task button
+    projectsArray.forEach((list) => {
+      if (list.title === projectList) {
+        let storedTasks = JSON.parse(localStorage.getItem('todos'));
+        list.todos.forEach((todo, index) => {
+          if (todo.title === taskTitle) {
+            list.todos.splice(index, 1);
+            // remove item selected
+            removeTaskFromLocalStorage(todo.title);
+          }
+        });
+      }
     });
   }
 
-  function createTask(
+  function renderTask(
     taskTitle,
     taskDescription,
     dueDate,
@@ -171,173 +310,34 @@ export function displayController() {
     // use checkbox.checked for values of true and false
 
     const currentTaskTitle = document.createElement('span');
+    currentTaskTitle.setAttribute('class', 'taskTitle');
     currentTaskTitle.textContent = taskTitle;
 
     const currentTaskDescription = document.createElement('span');
     currentTaskDescription.textContent = taskDescription;
+    currentTaskDescription.setAttribute('class', 'taskDescription');
 
     const currentDueDate = document.createElement('span');
     currentDueDate.textContent = dueDate;
+    currentDueDate.setAttribute('class', 'dueDate');
 
     const currentProjectList = document.createElement('span');
     currentProjectList.textContent = projectList;
+    currentProjectList.setAttribute('class', 'projectList');
 
     const currentPriority = document.createElement('span');
     currentPriority.setAttribute('class', 'dot');
 
     if (priority === 'low') {
       currentPriority.style.backgroundColor = 'gray';
+      currentPriority.setAttribute('value', 'low');
     } else if (priority === 'medium') {
       currentPriority.style.backgroundColor = 'orange';
+      currentPriority.setAttribute('value', 'medium');
     } else if (priority === 'high') {
       currentPriority.style.backgroundColor = 'red';
+      currentPriority.setAttribute('value', 'high');
     }
-
-    // create clickable div to expand and show description and buttons
-    const todoExpanded = document.createElement('div');
-    todoExpanded.setAttribute('class', 'todo-expanded');
-
-    const descriptionContainer = document.createElement('div');
-    descriptionContainer.setAttribute('class', 'description-container');
-    descriptionContainer.appendChild(currentTaskDescription);
-    todoExpanded.appendChild(descriptionContainer);
-
-    const buttonsContainer = document.createElement('div');
-    buttonsContainer.setAttribute('class', 'buttons-container');
-    const editBtn = document.createElement('button');
-    const deleteBtn = document.createElement('button');
-    editBtn.textContent = 'Edit';
-    deleteBtn.textContent = 'Delete';
-    buttonsContainer.appendChild(editBtn);
-    buttonsContainer.appendChild(deleteBtn);
-    todoExpanded.appendChild(buttonsContainer);
-
-    const editTaskDialog = document.querySelector('#edit-task-dialog');
-    const editTaskTitle = editTaskDialog.querySelector('#edit-item-title');
-    const editTaskDescription = editTaskDialog.querySelector(
-      '#edit-item-description'
-    );
-    let editPriority = editTaskDialog.querySelector('#edit-priority-level');
-    const defaultPriority = document.querySelector('.default-priority');
-    let editProjectList = editTaskDialog.querySelector('select');
-    let editDueDue = editTaskDialog.querySelector('#edit-due-date');
-
-    const saveTaskEdit = editTaskDialog.querySelector('.saveBtn');
-
-    editBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      globalEditBtn = currentTaskTitle.textContent;
-      while (editProjectList.hasChildNodes()) {
-        // to avoid duplicate values and errors
-        editProjectList.removeChild(editProjectList.lastChild); // clear sidebar added projects
-      }
-      // dynamically create a drop-down list with list options
-      projects.forEach((list) => {
-        const option = document.createElement('option');
-        option.value = list.title;
-        option.text = list.title;
-        editProjectList.appendChild(option);
-      });
-      editTaskTitle.value = taskTitle;
-      editTaskDescription.value = taskDescription;
-      editDueDue.value = dueDate;
-      editProjectList.value = projectList;
-      editPriority.value = priority;
-      editTaskDialog.showModal();
-      e.stopPropagation(); // prevents task from minimizing
-      // call functions that edit these parameters in a pop up form
-    });
-
-    // display current values
-    editTaskDialog.addEventListener('close', (e) => {});
-
-    // TODO: fix this to make edit work
-    saveTaskEdit.addEventListener('click', (e) => {
-      e.preventDefault();
-      const projectContainingTask = projects.find(
-        (list) => currentProjectList.textContent === list.title
-      );
-      if (projectContainingTask) {
-        const taskToEdit = projectContainingTask.todos.find(
-          (task) => globalEditBtn === task.title
-        );
-        if (taskToEdit) {
-          taskToEdit.title = editTaskTitle.value;
-          taskToEdit.description = editTaskDescription.value;
-          taskToEdit.dueDate = editDueDue.value;
-          taskToEdit.todoList = editProjectList.value;
-          taskToEdit.priority = editPriority.value;
-          taskToEdit.completed = checkbox.checked;
-        }
-      }
-      saveTaskToLocalStorage();
-      // render tasks again to reflect changes
-      const projectHeader = document.querySelector('#project-name');
-      displayTasks(projectHeader.firstChild.textContent);
-      editTaskDialog.close();
-    });
-
-    // delete task button
-    deleteBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      projects.forEach((list) => {
-        if (list.title === projectList) {
-          let storedTasks = JSON.parse(localStorage.getItem('todos'));
-          list.todos.forEach((todo, index) => {
-            if (currentTaskTitle.textContent === todo.title) {
-              list.todos.splice(index, 1);
-              // remove item selected
-              removeTaskFromLocalStorage(todo.title);
-            }
-          });
-        }
-      });
-      taskContainer.removeChild(task);
-    });
-
-    // Prevent checkbox click from triggering the expand/collapse
-    checkbox.addEventListener('click', (e) => {
-      e.stopPropagation(); // stop the click event from propagating to the parent
-      // or else it will reset every time you create a new task
-      if (checkbox.checked) {
-        projects.forEach((list) => {
-          list.todos.forEach((task) => {
-            if (task.title === currentTaskTitle.textContent) {
-              task.completed = true;
-              saveTaskToLocalStorage();
-              currentTaskTitle.classList.add('completed');
-              currentTaskDescription.classList.add('completed');
-              currentDueDate.classList.add('completed');
-              currentProjectList.classList.add('completed');
-            }
-          });
-        });
-      } else {
-        projects.forEach((list) => {
-          list.todos.forEach((task) => {
-            if (task.title === currentTaskTitle.textContent) {
-              task.completed = false;
-              saveTaskToLocalStorage();
-              currentTaskTitle.classList.remove('completed');
-              currentTaskDescription.classList.remove('completed');
-              currentDueDate.classList.remove('completed');
-              currentProjectList.classList.remove('completed');
-            }
-          });
-        });
-      }
-    });
-
-    // TODO: this gets minimized when I edit task, prevent this from happening
-    // expand and hide task description and buttons on click
-    task.addEventListener('click', (e) => {
-      e.preventDefault();
-      if (task.contains(todoExpanded)) {
-        task.removeChild(task.lastChild);
-      } else {
-        task.appendChild(todoExpanded);
-      }
-    });
 
     if (finished) {
       checkbox.checked = true;
@@ -362,7 +362,56 @@ export function displayController() {
     taskContainer.appendChild(task);
   }
 
-  function displayTasks(menuOption) {
+  function toggleTaskCompletion(taskTitle, completed) {
+    if (completed) {
+      projectsArray.forEach((list) => {
+        list.todos.forEach((task) => {
+          if (task.title === taskTitle) {
+            task.completed = true;
+            saveTaskToLocalStorage();
+          }
+        });
+      });
+    } else {
+      projectsArray.forEach((list) => {
+        list.todos.forEach((task) => {
+          if (task.title === taskTitle) {
+            task.completed = false;
+            saveTaskToLocalStorage();
+          }
+        });
+      });
+    }
+  }
+
+  function renderSubmenu() {
+    const submenu = document.querySelectorAll('.submenu');
+    submenu.forEach((item) => {
+      sidebar.removeChild(item);
+    });
+    projectsArray.forEach((project) => {
+      const container = document.createElement('div');
+      const newProject = document.createElement('button');
+      const image = document.createElement('img');
+      image.src = Icon;
+      container.setAttribute('class', 'submenu');
+      container.setAttribute('id', project.title);
+      newProject.setAttribute('class', 'btn');
+      newProject.setAttribute('value', project.title);
+      newProject.textContent = project.title;
+
+      if (project.title !== 'General') {
+        newProject.classList.add('new');
+      }
+
+      container.appendChild(image);
+      container.appendChild(newProject);
+      sidebar.appendChild(container);
+    });
+  }
+
+  function renderPage(menuOption) {
+    // render all tasks within that project
     const taskContainer = document.querySelector('#taskContainer');
 
     // clear taskContainer list to display updated task list for chosen todo list
@@ -372,10 +421,10 @@ export function displayController() {
 
     const sevenDaysFromNow = format(addWeeks(new Date(), 1), 'yyyy-MM-dd');
 
-    projects.forEach((list) => {
+    projectsArray.forEach((list) => {
       list.todos.forEach((todo) => {
         if (menuOption === 'All Tasks') {
-          createTask(
+          renderTask(
             todo.title,
             todo.description,
             todo.dueDate,
@@ -385,7 +434,7 @@ export function displayController() {
           );
         } else if (menuOption === 'Today') {
           if (todo.dueDate === today) {
-            createTask(
+            renderTask(
               todo.title,
               todo.description,
               todo.dueDate,
@@ -394,10 +443,9 @@ export function displayController() {
               todo.completed
             );
           }
-          // find way to find within a range
         } else if (menuOption === 'Next 7 Days') {
           if (todo.dueDate >= today && todo.dueDate <= sevenDaysFromNow) {
-            createTask(
+            renderTask(
               todo.title,
               todo.description,
               todo.dueDate,
@@ -408,7 +456,7 @@ export function displayController() {
           }
         } else {
           if (menuOption === todo.todoList) {
-            createTask(
+            renderTask(
               todo.title,
               todo.description,
               todo.dueDate,
@@ -423,100 +471,43 @@ export function displayController() {
   }
 
   // handle updating project header text on click
-  const updateProjectHeader = function () {
-    // const currentProjectHeader = document.querySelector('#project-name');
-    const buttons = document.querySelectorAll('.menu > .btn, .submenu > .btn');
-    const buttonDivs = document.querySelectorAll('.submenu');
+  function updateProjectHeader(e) {
+    // const buttonDivs = document.querySelectorAll('.submenu');
 
-    const showButton = document.createElement('button');
-    showButton.setAttribute('id', 'projectDeleteBtn');
-    showButton.textContent = 'X';
-
-    const deleteListDialog = document.getElementById('delete-list-dialog');
-    const deleteBtn = deleteListDialog.querySelector('#deleteBtn');
+    // create delete button to attach to project header
+    const deleteProjectButton = document.createElement('button');
+    deleteProjectButton.setAttribute('id', 'projectDeleteBtn');
+    deleteProjectButton.textContent = 'X';
 
     // add delete button to each new list we create
-    buttons.forEach((btn) => {
-      btn.addEventListener('click', (e) => {
-        // change project header to whatever list we click
-        currentProjectHeader.textContent = e.target.value;
-        // if has submenu class and is not general
-        // add delete list button next to header
-        if (
-          e.target.classList.contains('btn') &&
-          e.target.value !== 'General' &&
-          e.target.value !== 'Next 7 Days' &&
-          e.target.value !== 'Today' &&
-          e.target.value !== 'All Tasks'
-        ) {
-          currentProjectHeader.appendChild(showButton);
-        }
-        displayTasks(btn.value); // display tasks of list we choose
-      });
-    });
-
-    // show modal to delete list
-    showButton.addEventListener('click', (e) => {
-      e.preventDefault();
-      deleteListDialog.showModal();
-    });
-
-    // delete list in UI and in projects array
-    buttonDivs.forEach((div) => {
-      deleteBtn.addEventListener('click', (e) => {
-        if (currentProjectHeader.firstChild.textContent === div.id) {
-          // if i make 3 lists, and delete the 3rd one, then the 2nd, the 2nd wont delete
-          // in the UI
-          removeProjectFromLocalStorage(
-            currentProjectHeader.firstChild.textContent
-          );
-          deleteTodoList(currentProjectHeader.firstChild.textContent);
-          displaySubmenu();
-          currentProjectHeader.textContent = 'All Tasks';
-          displayTasks('All Tasks');
-          deleteListDialog.close();
-        }
-      });
-    });
-  };
-
-  function crossOutCompletedTask() {
-    const todoTask = document.querySelectorAll('');
+    // buttons.forEach((btn) => {
+    //   btn.addEventListener('click', (e) => {
+    // change project header to whatever list we click
+    currentProjectHeader.textContent = e.target.value;
+    // if has submenu class and is not general
+    // add delete list button next to header
+    if (
+      e.target.classList.contains('btn') &&
+      e.target.value !== 'General' &&
+      e.target.value !== 'Next 7 Days' &&
+      e.target.value !== 'Today' &&
+      e.target.value !== 'All Tasks'
+    ) {
+      currentProjectHeader.appendChild(deleteProjectButton);
+    }
   }
 
-  newProjectModal();
-  newTaskModal();
-  displaySubmenu();
-  updateProjectHeader();
-
-  window.addEventListener('load', (e) => {
-    // load lists
-    if (localStorage.getItem('projects') !== null) {
-      const projectStorage = JSON.parse(localStorage.getItem('projects'));
-      for (let i = 0; i < projectStorage.length; i++) {
-        if (projectStorage[i] !== 'General') {
-          createTodoList(projectStorage[i]);
-        }
-      }
-    }
-    displaySubmenu();
-
-    // load all tasks
-    if (localStorage.getItem('todos') !== null) {
-      const todoStorage = JSON.parse(localStorage.getItem('todos'));
-      for (let i = 0; i < todoStorage.length; i++) {
-        createTodoItem(
-          todoStorage[i].title,
-          todoStorage[i].description,
-          todoStorage[i].dueDate,
-          todoStorage[i].todoList,
-          todoStorage[i].priority,
-          todoStorage[i].completed
-        );
-      }
-    }
-    displayTasks('All Tasks');
-  });
-
-  return {};
+  return {
+    newTaskModal,
+    newProjectModal,
+    renderPage,
+    renderSubmenu,
+    renderTask,
+    updateProjectHeader,
+    expandTaskDiv,
+    toggleTaskCompletion,
+    deleteTask,
+    deleteProjectModal,
+    editTaskModal,
+  };
 }
